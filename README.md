@@ -1,40 +1,36 @@
-````md
-# 🤖 PortfoliAI – Investor Profiling & AI Consultant Module
+🤖 PortfoliAI – Investor Profiling & AI Consultant Module
 
-**TL;DR:**  
+TL;DR  
 PortfoliAI is a modular FastAPI-based backend that combines ML-driven investor risk profiling with LLM-generated, market-aware investment guidance, localized for the Kenyan market.
 
-A complete, modular investor profiling system designed as a **production-ready MVP**, with clear upgrade paths for full-scale deployment.
+A complete, modular investor profiling system designed as a production-ready MVP, with clear upgrade paths for full-scale deployment.
 
-**Status:** ✅ Production-Ready (MVP / Demo) | Modular | Plug-and-Play
+Status: ✅ Production-Ready (MVP / Demo) | Modular | Plug-and-Play
 
----
 
-## 📋 Table of Contents
-- [Quick Start](#quick-start)
-- [Features](#features)
-- [Architecture](#architecture)
-- [User Flow](#user-flow)
-- [API Documentation](#api-documentation)
-- [Integration Guide](#integration-guide)
-- [Database Migration](#database-migration)
-- [Groq AI Setup](#groq-ai-setup-free)
-- [Market Data Integration](#market-data-integration)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
+TABLE OF CONTENTS
+- Quick Start
+- Features
+- Architecture
+- User Flow
+- API Documentation
+- Integration Guide
+- Database Migration
+- Groq AI Setup
+- Market Data Integration
+- Project Structure
+- Configuration
 
----
 
-## 🚀 Quick Start
+QUICK START
 
-### Prerequisites
-- **Python 3.11+**
-- **Virtual environment** (included)
-- **Terminal / Command Line**
+Prerequisites
+- Python 3.11+
+- Virtual environment (included)
+- Terminal / Command Line
 
-```bash
 python3 --version
-````
+
 
 ---
 
