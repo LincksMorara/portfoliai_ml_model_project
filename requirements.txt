@@ -1,0 +1,66 @@
+# ============================================
+# PortfoliAI ML Service - Dependencies
+# ============================================
+# Python 3.11+ required
+# Install: ./venv/bin/python3 -m pip install -r requirements.txt
+
+# ============================================
+# DATA PROCESSING & ML
+# ============================================
+pandas>=1.5.0              # Data manipulation and analysis
+numpy>=1.24.0              # Numerical computing
+scikit-learn==1.6.1        # Machine learning (CRITICAL: Version must match trained models)
+joblib>=1.3.0              # Model serialization/loading
+xgboost>=1.7.0             # Gradient boosting (for advanced models)
+
+# ============================================
+# WEB FRAMEWORK
+# ============================================
+fastapi>=0.104.0           # Modern async web framework
+uvicorn[standard]>=0.24.0  # ASGI server (includes websockets, httptools)
+pydantic>=2.0.0            # Data validation and serialization
+
+# ============================================
+# AI / LLM INTEGRATION (Optional but Recommended)
+# ============================================
+groq>=0.30.0               # Groq AI client (FREE, fast inference)
+openai>=1.0.0              # OpenAI client (alternative, paid)
+
+# ============================================
+# UTILITIES
+# ============================================
+python-dotenv>=1.0.0       # Environment variable management (.env files)
+requests>=2.31.0           # HTTP requests
+yfinance>=0.2.0            # Market data fetching (Yahoo Finance)
+beautifulsoup4>=4.12.0     # Web scraping (for market data)
+
+# ============================================
+# DATABASE & ORM (Production Ready)
+# ============================================
+sqlalchemy>=2.0.0              # ORM for database models
+alembic>=1.12.0                # Database migrations
+psycopg[binary]>=3.1.0         # PostgreSQL driver (newer, easier install)
+supabase>=2.0.0                # Supabase Python client
+postgrest-py>=0.10.0           # REST client for Supabase
+
+# ============================================
+# AUTHENTICATION & SECURITY
+# ============================================
+passlib[bcrypt]>=1.7.4                 # Password hashing with bcrypt
+python-jose[cryptography]>=3.3.0       # JWT token handling
+python-multipart>=0.0.6                # Form data parsing
+
+# ============================================
+# TESTING (Recommended for Production)
+# ============================================
+pytest>=7.4.0                  # Testing framework
+httpx>=0.25.0                  # Async HTTP client for testing
+
+# ============================================
+# NOTES
+# ============================================
+# - scikit-learn version MUST be 1.6.1 (model compatibility)
+# - uvicorn[standard] includes performance optimizations
+# - groq and openai are optional (app works with templates if not set)
+# - All versions tested on Python 3.11-3.13
+# ============================================

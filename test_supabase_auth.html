@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Supabase Auth - PortfoliAI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      background: #f7fafc;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: #718096;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      background: white;
+      color: #667eea;
+      border-bottom: 3px solid #667eea;
+    }
+    
+    .tab-content {
+      padding: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2d3748;
+      font-weight: 500;
+    }
+    
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .message.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    
+    .user-info {
+      background: #f7fafc;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .user-info h3 {
+      margin-bottom: 10px;
+      color: #2d3748;
+    }
+    
+    .user-info p {
+      color: #4a5568;
+      font-size: 14px;
+      margin: 5px 0;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 PortfoliAI</h1>
+      <p>Test Supabase Authentication</p>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('signup')">Sign Up</button>
+      <button class="tab" onclick="switchTab('login')">Login</button>
+      <button class="tab" onclick="switchTab('profile')">Profile</button>
+    </div>
+    
+    <div class="tab-content">
+      <!-- Sign Up Tab -->
+      <div id="signup-tab">
+        <div id="signup-message"></div>
+        
+        <form id="signupForm" onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label for="signup-name">Full Name (optional)</label>
+            <input type="text" id="signup-name" placeholder="John Doe">
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-email">Email *</label>
+            <input type="email" id="signup-email" required placeholder="you@example.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-password">Password * (min 8 characters)</label>
+            <input type="password" id="signup-password" required minlength="8" placeholder="••••••••">
+          </div>
+          
+          <button type="submit" class="btn" id="signup-btn">Create Account</button>
+        </form>
+      </div>
+      
+      <!-- Login Tab -->
+      <div id="login-tab" class="hidden">
+        <div id="login-message"></div>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required placeholder="you@example.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required placeholder="••••••••">
+          </div>
+          
+          <button type="submit" class="btn" id="login-btn">Login</button>
+        </form>
+      </div>
+      
+      <!-- Profile Tab -->
+      <div id="profile-tab" class="hidden">
+        <div id="profile-message"></div>
+        <div id="user-info" class="user-info hidden"></div>
+        <button onclick="handleLogout()" class="btn">Logout</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const API_BASE = 'http://localhost:8000/api';
+    
+    function switchTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Update tab content
+      document.querySelectorAll('.tab-content > div').forEach(t => t.classList.add('hidden'));
+      document.getElementById(`${tab}-tab`).classList.remove('hidden');
+      
+      // If switching to profile, load user info
+      if (tab === 'profile') {
+        loadUserProfile();
+      }
+    }
+    
+    function showMessage(tabId, message, type) {
+      const messageDiv = document.getElementById(`${tabId}-message`);
+      messageDiv.innerHTML = `<div class="message ${type}">${message}</div>`;
+      setTimeout(() => {
+        messageDiv.innerHTML = '';
+      }, 10000);
+    }
+    
+    async function handleSignup(event) {
+      event.preventDefault();
+      
+      const btn = document.getElementById('signup-btn');
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+      
+      const data = {
+        email: document.getElementById('signup-email').value,
+        password: document.getElementById('signup-password').value,
+        full_name: document.getElementById('signup-name').value || null
+      };
+      
+      try {
+        const response = await fetch(`${API_BASE}/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          showMessage('signup', `
+            <strong>✅ Success!</strong><br>
+            ${result.message}<br>
+            <strong>Check your email (${data.email}) for the verification link!</strong>
+          `, 'success');
+          document.getElementById('signupForm').reset();
+        } else {
+          showMessage('signup', `❌ ${result.detail}`, 'error');
+        }
+      } catch (error) {
+        showMessage('signup', `❌ Error: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+      }
+    }
+    
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const btn = document.getElementById('login-btn');
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+      
+      const data = {
+        email: document.getElementById('login-email').value,
+        password: document.getElementById('login-password').value
+      };
+      
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',  // Important for cookies!
+          body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          showMessage('login', `✅ Welcome back! Logged in successfully.`, 'success');
+          document.getElementById('loginForm').reset();
+          
+          // Switch to profile tab after 1 second
+          setTimeout(() => {
+            document.querySelectorAll('.tab')[2].click();
+          }, 1000);
+        } else {
+          showMessage('login', `❌ ${result.detail}`, 'error');
+        }
+      } catch (error) {
+        showMessage('login', `❌ Error: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Login';
+      }
+    }
+    
+    async function loadUserProfile() {
+      try {
+        const response = await fetch(`${API_BASE}/auth/me`, {
+          credentials: 'include'  // Send cookies
+        });
+        
+        if (response.ok) {
+          const user = await response.json();
+          
+          document.getElementById('user-info').innerHTML = `
+            <h3>👤 Your Profile</h3>
+            <p><strong>Email:</strong> ${user.email}</p>
+            <p><strong>Name:</strong> ${user.full_name || 'Not set'}</p>
+            <p><strong>User ID:</strong> ${user.id}</p>
+            <p><strong>Created:</strong> ${new Date(user.created_at).toLocaleString()}</p>
+          `;
+          document.getElementById('user-info').classList.remove('hidden');
+        } else {
+          showMessage('profile', '⚠️ Not logged in. Please login first.', 'info');
+          document.getElementById('user-info').classList.add('hidden');
+        }
+      } catch (error) {
+        showMessage('profile', `❌ Error loading profile: ${error.message}`, 'error');
+      }
+    }
+    
+    async function handleLogout() {
+      try {
+        const response = await fetch(`${API_BASE}/auth/logout`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          showMessage('profile', '✅ Logged out successfully', 'success');
+          document.getElementById('user-info').classList.add('hidden');
+          
+          // Switch to login tab
+          setTimeout(() => {
+            document.querySelectorAll('.tab')[1].click();
+          }, 1000);
+        }
+      } catch (error) {
+        showMessage('profile', `❌ Logout error: ${error.message}`, 'error');
+      }
+    }
+  </script>
+</body>
+</html>
+
+

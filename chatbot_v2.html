@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Research Partner - PortfoliAI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #202123;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #3d3d3d;
+    }
+    
+    .sidebar-header {
+      padding: 20px 15px;
+      border-bottom: 1px solid #3d3d3d;
+    }
+    
+    .new-chat-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .new-chat-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .conversations-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    
+    .conversation-item {
+      padding: 12px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    
+    .conversation-item:hover {
+      background: #2a2b2e;
+    }
+    
+    .conversation-item.active {
+      background: #343541;
+    }
+    
+    .conversation-title {
+      flex: 1;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .conversation-menu {
+      opacity: 0;
+      display: flex;
+      gap: 4px;
+      transition: opacity 0.2s;
+    }
+    
+    .conversation-item:hover .conversation-menu {
+      opacity: 1;
+    }
+    
+    .menu-icon {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .menu-icon:hover {
+      background: #40414f;
+    }
+    
+    .sidebar-footer {
+      padding: 15px;
+      border-top: 1px solid #3d3d3d;
+    }
+    
+    .sidebar-link {
+      display: block;
+      padding: 10px;
+      color: #ececf1;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      transition: background 0.2s;
+      margin-bottom: 4px;
+    }
+    
+    .sidebar-link:hover {
+      background: #2a2b2e;
+    }
+    
+    /* Main Chat Area */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #343541;
+    }
+    
+    .chat-header {
+      padding: 15px 20px;
+      background: #202123;
+      border-bottom: 1px solid #3d3d3d;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .chat-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .message {
+      margin-bottom: 30px;
+      display: flex;
+      gap: 15px;
+    }
+    
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .message.user .message-avatar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .message.bot .message-avatar {
+      background: #10a37f;
+    }
+    
+    .message-content {
+      flex: 1;
+      color: #ececf1;
+      line-height: 1.7;
+      max-width: 800px;
+    }
+    
+    .message-content strong {
+      color: white;
+      font-weight: 600;
+    }
+    
+    .message-content ul {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    
+    .message-content li {
+      margin: 5px 0;
+    }
+    
+    .chat-input-container {
+      padding: 20px;
+      background: #343541;
+      border-top: 1px solid #3d3d3d;
+    }
+    
+    .chat-input-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #40414f;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 15px;
+      outline: none;
+      resize: none;
+      max-height: 120px;
+    }
+    
+    .chat-input::placeholder {
+      color: #8e8ea0;
+    }
+    
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: none;
+      background: #19c37d;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s;
+    }
+    
+    .send-btn:hover {
+      background: #1a7f5a;
+    }
+    
+    .send-btn:disabled {
+      background: #40414f;
+      cursor: not-allowed;
+    }
+    
+    .loading-dots {
+      display: flex;
+      gap: 4px;
+      padding: 8px;
+    }
+    
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      background: #8e8ea0;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+    
+    .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+    
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    
+    .empty-chat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #8e8ea0;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .empty-chat h2 {
+      color: #ececf1;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    
+    .example-prompts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      max-width: 900px;
+      margin-top: 30px;
+    }
+    
+    .example-prompt {
+      background: #40414f;
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #ececf1;
+      font-size: 14px;
+    }
+    
+    .example-prompt:hover {
+      background: #4a4b56;
+      transform: translateY(-2px);
+    }
+    
+    .rename-input {
+      background: #40414f;
+      border: 1px solid #667eea;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      width: 100%;
+    }
+    
+    .rename-input:focus {
+      outline: none;
+      border-color: #764ba2;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" onclick="createNewChat()">
+        <span>➕</span>
+        <span>New Chat</span>
+      </button>
+    </div>
+    
+    <div class="conversations-list" id="conversationsList">
+      <!-- Conversations will be loaded here -->
+    </div>
+    
+    <div class="sidebar-footer">
+      <a href="/dashboard" class="sidebar-link">📊 Dashboard</a>
+      <a href="/portfolio" class="sidebar-link">💼 Portfolio</a>
+      <a href="#" class="sidebar-link" onclick="logout(); return false;">🚪 Logout</a>
+    </div>
+  </div>
+  
+  <!-- Main Chat Area -->
+  <div class="main">
+    <div class="chat-header">
+      <div class="chat-title" id="chatTitle">AI Research Partner</div>
+      <button class="btn btn-secondary" style="background: #40414f; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;" onclick="loadConversations()">🔄 Refresh</button>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+      <div class="empty-chat">
+        <h2>💬 Your AI Investment Research Partner</h2>
+        <p>I analyze stocks, review your portfolio, and help you make smarter investment decisions.</p>
+        
+        <div class="example-prompts">
+          <div class="example-prompt" onclick="sendExampleMessage('Should I invest in Apple?')">
+            <strong>📈 Stock Analysis</strong><br>
+            "Should I invest in Apple?"
+          </div>
+          <div class="example-prompt" onclick="sendExampleMessage('How\\'s my portfolio doing?')">
+            <strong>💼 Portfolio Review</strong><br>
+            "How's my portfolio doing?"
+          </div>
+          <div class="example-prompt" onclick="sendExampleMessage('Compare Microsoft vs Google')">
+            <strong>⚖️ Compare Stocks</strong><br>
+            "Compare Microsoft vs Google"
+          </div>
+          <div class="example-prompt" onclick="sendExampleMessage('What are Kenyan mutual funds?')">
+            <strong>🇰🇪 Kenya Investments</strong><br>
+            "What are Kenyan mutual funds?"
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="chat-input-container">
+      <div class="chat-input-wrapper">
+        <textarea 
+          class="chat-input" 
+          id="messageInput" 
+          rows="1"
+          placeholder="Ask me anything about investing..." 
+          onkeydown="handleKeyDown(event)"
+          oninput="adjustTextareaHeight(this)"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendCurrentMessage()">
+          ↑
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentConversationId = null;
+    let conversations = [];
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadConversations();
+    });
+    
+    // Load all conversations
+    async function loadConversations() {
+      try {
+        const response = await fetch('/api/conversations');
+        const data = await response.json();
+        
+        conversations = data.conversations || [];
+        displayConversationsList();
+        
+        // If no current conversation and we have conversations, load the most recent
+        if (!currentConversationId && conversations.length > 0) {
+          loadConversation(conversations[0].conversation_id);
+        }
+        
+      } catch (error) {
+        console.error('Error loading conversations:', error);
+      }
+    }
+    
+    // Display conversations in sidebar
+    function displayConversationsList() {
+      const list = document.getElementById('conversationsList');
+      
+      if (conversations.length === 0) {
+        list.innerHTML = `
+          <div style="padding: 20px; text-align: center; color: #8e8ea0; font-size: 13px;">
+            No conversations yet.<br>Start a new chat!
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      conversations.forEach(conv => {
+        const isActive = conv.conversation_id === currentConversationId;
+        html += `
+          <div class="conversation-item ${isActive ? 'active' : ''}" 
+               onclick="loadConversation('${conv.conversation_id}')"
+               id="conv-${conv.conversation_id}">
+            <div class="conversation-title" id="title-${conv.conversation_id}">
+              💬 ${conv.title}
+            </div>
+            <div class="conversation-menu">
+              <span class="menu-icon" onclick="event.stopPropagation(); renameConversation('${conv.conversation_id}', '${conv.title.replace(/'/g, "\\'")}')">✏️</span>
+              <span class="menu-icon" onclick="event.stopPropagation(); deleteConversation('${conv.conversation_id}')">🗑️</span>
+            </div>
+          </div>
+        `;
+      });
+      
+      list.innerHTML = html;
+    }
+    
+    // Create new chat (just clears UI, conversation created on first message)
+    function createNewChat() {
+      console.log('➕ Starting new chat...');
+      
+      // Clear current conversation ID so a new one will be created on first message
+      currentConversationId = null;
+      
+      // Clear chat area
+      clearChatMessages();
+      
+      // Update title to show it's a new chat
+      document.getElementById('chatTitle').textContent = 'New Chat';
+      
+      // Focus input
+      document.getElementById('messageInput').focus();
+      
+      console.log('✅ New chat ready - conversation will be created when you send first message');
+    }
+    
+    // Load conversation
+    async function loadConversation(conversationId) {
+      try {
+        const response = await fetch(`/api/conversations/${conversationId}`);
+        const conversation = await response.json();
+        
+        currentConversationId = conversationId;
+        document.getElementById('chatTitle').textContent = conversation.title;
+        
+        // Display messages
+        displayMessages(conversation.messages);
+        
+        // Update sidebar
+        displayConversationsList();
+        
+      } catch (error) {
+        console.error('Error loading conversation:', error);
+        alert('Error loading conversation');
+      }
+    }
+    
+    // Display messages in chat
+    function displayMessages(messages) {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+      
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="empty-chat">
+            <h2>Ready to chat!</h2>
+            <p>Ask me anything about stocks, your portfolio, or investing.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      messages.forEach(msg => {
+        addMessageToUI(msg.content, msg.role === 'user');
+      });
+    }
+    
+    // Rename conversation
+    async function renameConversation(conversationId, currentTitle) {
+      const newTitle = prompt('Rename conversation:', currentTitle);
+      
+      if (!newTitle || newTitle === currentTitle) return;
+      
+      try {
+        const response = await fetch(`/api/conversations/${conversationId}/rename`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title: newTitle })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Update in local list
+          const conv = conversations.find(c => c.conversation_id === conversationId);
+          if (conv) {
+            conv.title = newTitle;
+          }
+          
+          // Update UI
+          displayConversationsList();
+          
+          // Update header if it's current conversation
+          if (conversationId === currentConversationId) {
+            document.getElementById('chatTitle').textContent = newTitle;
+          }
+        }
+      } catch (error) {
+        console.error('Error renaming:', error);
+        alert('Error renaming conversation');
+      }
+    }
+    
+    // Delete conversation
+    async function deleteConversation(conversationId) {
+      if (!confirm('Delete this conversation?')) return;
+      
+      try {
+        console.log('🗑️ Deleting conversation:', conversationId);
+        
+        const response = await fetch(`/api/conversations/${conversationId}`, {
+          method: 'DELETE'
+        });
+        
+        console.log('Delete response status:', response.status);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || `HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('✅ Delete result:', result);
+        
+        if (result.success) {
+          // Remove from local list
+          conversations = conversations.filter(c => c.conversation_id !== conversationId);
+          
+          // If deleting current conversation, switch to another or create new
+          if (conversationId === currentConversationId) {
+            if (conversations.length > 0) {
+              loadConversation(conversations[0].conversation_id);
+            } else {
+              currentConversationId = null;
+              clearChatMessages();
+            }
+          } else {
+            displayConversationsList();
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error deleting:', error);
+        alert(`Error deleting conversation: ${error.message}`);
+      }
+    }
+    
+    // Send example message (from clicking prompt)
+    function sendExampleMessage(message) {
+      console.log('📤 Sending example message:', message);
+      sendMessage(message);
+    }
+    
+    // Send message from input box
+    async function sendCurrentMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      console.log('📤 Sending message:', message);
+      await sendMessage(message);
+      input.value = '';
+      adjustTextareaHeight(input);
+    }
+    
+    // Main send message function
+    async function sendMessage(message) {
+      console.log('🚀 sendMessage called with:', message);
+      
+      if (!message || !message.trim()) {
+        console.warn('⚠️ Empty message, skipping');
+        return;
+      }
+      // Add user message to UI
+      addMessageToUI(message, true);
+      
+      // Disable input
+      const sendBtn = document.getElementById('sendBtn');
+      const input = document.getElementById('messageInput');
+      
+      if (sendBtn) sendBtn.disabled = true;
+      if (input) input.disabled = true;
+      
+      // Show loading
+      showLoading();
+      
+      try {
+        // Build request body - only include conversation_id if it exists
+        const requestBody = { message: message };
+        if (currentConversationId) {
+          requestBody.conversation_id = currentConversationId;
+        }
+        
+        console.log('📡 Sending to /api/chatbot:', requestBody);
+        
+        const response = await fetch('/api/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
+        });
+        
+        console.log('📨 Response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Response data:', data);
+        
+        hideLoading();
+        
+        // If this created a new conversation, update current ID
+        if (data.conversation_id && data.conversation_id !== currentConversationId) {
+          console.log('🆕 New conversation created:', data.conversation_id);
+          currentConversationId = data.conversation_id;
+          // Reload conversations to get the new one with LLM-generated title
+          await loadConversations();
+        }
+        
+        // Add bot response
+        if (data.response) {
+          addMessageToUI(data.response, false);
+        } else {
+          console.warn('⚠️ No response in data:', data);
+          addMessageToUI('No response received', false);
+        }
+        
+      } catch (error) {
+        console.error('❌ Error sending message:', error);
+        hideLoading();
+        addMessageToUI('Error: ' + error.message + '. Check browser console for details.', false);
+      } finally {
+        if (sendBtn) sendBtn.disabled = false;
+        if (input) {
+          input.disabled = false;
+          input.focus();
+        }
+      }
+    }
+    
+    function addMessageToUI(content, isUser) {
+      console.log(`➕ Adding message to UI (${isUser ? 'user' : 'bot'}):`, content.substring(0, 50));
+      
+      const container = document.getElementById('chatMessages');
+      
+      if (!container) {
+        console.error('❌ Chat messages container not found!');
+        return;
+      }
+      
+      // Remove empty state if present
+      const emptyChat = container.querySelector('.empty-chat');
+      if (emptyChat) {
+        console.log('🗑️ Removing empty state');
+        emptyChat.remove();
+      }
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+      
+      messageDiv.innerHTML = `
+        <div class="message-avatar">${isUser ? '👤' : '🤖'}</div>
+        <div class="message-content">${formatMessageContent(content)}</div>
+      `;
+      
+      container.appendChild(messageDiv);
+      console.log('✅ Message added to UI');
+      scrollToBottom();
+    }
+    
+    function formatMessageContent(text) {
+      // Convert **bold** to <strong>
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      
+      // Convert bullet points
+      text = text.replace(/^• /gm, '&bull; ');
+      
+      // Convert newlines to <br>
+      text = text.replace(/\n/g, '<br>');
+      
+      return text;
+    }
+    
+    function showLoading() {
+      console.log('⏳ Showing loading indicator...');
+      const container = document.getElementById('chatMessages');
+      
+      if (!container) {
+        console.error('❌ Cannot show loading - container not found');
+        return;
+      }
+      
+      // Remove empty state if present
+      const emptyChat = container.querySelector('.empty-chat');
+      if (emptyChat) {
+        emptyChat.remove();
+      }
+      
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'message bot';
+      loadingDiv.id = 'loadingMessage';
+      loadingDiv.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-content">
+          <div class="loading-dots">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+          </div>
+        </div>
+      `;
+      container.appendChild(loadingDiv);
+      console.log('✅ Loading indicator shown');
+      scrollToBottom();
+    }
+    
+    function hideLoading() {
+      console.log('🔚 Hiding loading indicator...');
+      const loading = document.getElementById('loadingMessage');
+      if (loading) {
+        loading.remove();
+        console.log('✅ Loading indicator removed');
+      }
+    }
+    
+    function clearChatMessages() {
+      document.getElementById('chatMessages').innerHTML = `
+        <div class="empty-chat">
+          <h2>💬 Your AI Investment Research Partner</h2>
+          <p>I analyze stocks, review your portfolio, and help you make smarter investment decisions.</p>
+          
+          <div class="example-prompts">
+            <div class="example-prompt" onclick="sendExampleMessage('Should I invest in Apple?')">
+              <strong>📈 Stock Analysis</strong><br>
+              "Should I invest in Apple?"
+            </div>
+            <div class="example-prompt" onclick="sendExampleMessage('How\\'s my portfolio doing?')">
+              <strong>💼 Portfolio Review</strong><br>
+              "How's my portfolio doing?"
+            </div>
+            <div class="example-prompt" onclick="sendExampleMessage('Compare Microsoft vs Google')">
+              <strong>⚖️ Compare Stocks</strong><br>
+              "Compare Microsoft vs Google"
+            </div>
+            <div class="example-prompt" onclick="sendExampleMessage('What are Kenyan mutual funds?')">
+              <strong>🇰🇪 Kenya Investments</strong><br>
+              "What are Kenyan mutual funds?"
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function scrollToBottom() {
+      const container = document.getElementById('chatMessages');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+    
+    function adjustTextareaHeight(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+    
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        console.log('⌨️ Enter pressed, sending message');
+        sendCurrentMessage();
+      }
+    }
+    
+    function logout() {
+      fetch('/auth/logout', { method: 'POST' })
+        .then(() => window.location.href = '/');
+    }
+    
+    // Debug: Log when page loads
+    console.log('🎬 Chatbot page loaded');
+    console.log('📝 Message input:', document.getElementById('messageInput'));
+    console.log('📤 Send button:', document.getElementById('sendBtn'));
+  </script>
+</body>
+</html>
+

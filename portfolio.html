@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Tracker - PortfoliAI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+    
+    .navbar {
+      background: white;
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .nav-link {
+      color: #666;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .nav-link:hover {
+      background: #f0f0f0;
+      color: #667eea;
+    }
+    
+    .nav-link.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    .header-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+    
+    .header-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .currency-toggle-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+    }
+
+    .currency-toggle {
+      display: inline-flex;
+      background: rgba(255,255,255,0.25);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .currency-option {
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.9);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .currency-option.active {
+      background: white;
+      color: #764ba2;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    
+    .stat-sub {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 5px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+    
+    .btn-secondary:hover {
+      background: #f5f7ff;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      text-align: left;
+      padding: 12px;
+      background: #f8f9fa;
+      font-weight: 600;
+      font-size: 13px;
+      color: #666;
+      text-transform: uppercase;
+    }
+    
+    td {
+      padding: 15px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    tr:hover {
+      background: #f8f9fa;
+    }
+    
+    .gain { color: #2ecc71; }
+    .loss { color: #e74c3c; }
+    
+    .health-score {
+      text-align: center;
+      padding: 30px;
+    }
+    
+    .score-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .health-rating {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    
+    .health-insights {
+      text-align: left;
+      margin-top: 20px;
+    }
+    
+    .insight-item {
+      padding: 10px 15px;
+      margin: 8px 0;
+      border-radius: 8px;
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .form-input:focus {
+      border-color: #667eea;
+    }
+    
+    .form-select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background: white;
+    }
+    
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-warning { background: #fff3cd; color: #856404; }
+    .badge-danger { background: #f8d7da; color: #721c24; }
+    .badge-info { background: #d1ecf1; color: #0c5460; }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">PortfoliAI</div>
+    <div class="nav-links">
+      <a href="/dashboard" class="nav-link">Dashboard</a>
+      <a href="/portfolio" class="nav-link active">Portfolio</a>
+      <a href="/chatbot" class="nav-link">AI Assistant</a>
+      <a href="#" class="nav-link" onclick="logout()">Logout</a>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- Portfolio Overview Header -->
+    <div class="header-section">
+      <h1 style="margin-bottom: 5px;">💼 Your Portfolio</h1>
+      <p style="opacity: 0.9;">Track positions, monitor P/L, and plan withdrawals</p>
+      <div class="currency-toggle-wrapper">
+        <span>Display currency:</span>
+        <div class="currency-toggle">
+          <button class="currency-option" id="currencyUSD" onclick="setPreferredCurrency('USD')">USD</button>
+          <button class="currency-option" id="currencyKES" onclick="setPreferredCurrency('KES')">KES</button>
+        </div>
+      </div>
+      
+      <div class="header-grid">
+        <div class="stat-card" style="background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white;">
+          <div class="stat-label" style="color: rgba(255,255,255,0.9);">💵 Cash Balance</div>
+          <div class="stat-value" id="cashBalance">$0</div>
+          <button onclick="openDepositModal()" style="margin-top: 10px; padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">+ Deposit Cash</button>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">Total Value</div>
+          <div class="stat-value" id="totalValue">$0</div>
+          <div class="stat-sub" id="totalPL">+$0 (0%)</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">Total P/L</div>
+          <div class="stat-value" id="totalGain">$0</div>
+          <div class="stat-sub" id="totalGainPercent">0%</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">Holdings</div>
+          <div class="stat-value" id="holdingsCount">0</div>
+          <div class="stat-sub" id="positionsCount">0 positions</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-label">Health Score</div>
+          <div class="stat-value" id="healthScore">-</div>
+          <div class="stat-sub" id="healthRating">Loading...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Portfolio Health Score -->
+    <div class="card">
+      <div class="card-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div id="healthIndicatorCircle" style="width: 16px; height: 16px; border-radius: 50%; background: #999; transition: background 0.3s ease;"></div>
+          <div class="card-title">🏥 Portfolio Health</div>
+        </div>
+        <button class="btn btn-secondary" onclick="refreshData()">Refresh</button>
+      </div>
+      
+      <div class="health-score" id="healthSection">
+        <div class="score-circle" id="scoreCircle">
+          <span id="healthScoreDisplay">--</span>
+        </div>
+        <div class="health-rating" id="healthRatingDisplay">Calculating...</div>
+        
+        <div class="health-insights" id="healthInsights"></div>
+      </div>
+    </div>
+    
+    <!-- Holdings Table -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📊 Holdings</div>
+        <button class="btn btn-primary" onclick="openAddPositionModal()">+ Add Position</button>
+      </div>
+      
+      <div id="holdingsTable">
+        <div class="empty-state">
+          <div class="empty-state-icon">📦</div>
+          <h3>No positions yet</h3>
+          <p>Add your first position to start tracking</p>
+          <button class="btn btn-primary" onclick="openAddPositionModal()" style="margin-top: 20px;">+ Add Position</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Recent Transactions -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 Recent Transactions</div>
+        <button class="btn btn-secondary" onclick="loadPortfolioData()" style="font-size: 13px;">🔄 Refresh</button>
+      </div>
+      <div id="transactionsTable">
+        <div style="text-align: center; padding: 20px; color: #999;">
+          Loading transactions...
+        </div>
+      </div>
+    </div>
+    
+    <!-- Withdrawal Planning -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💰 Withdrawal Planning</div>
+        <button class="btn btn-secondary" onclick="openWithdrawalModal()">Record Withdrawal</button>
+      </div>
+      
+      <div id="withdrawalSection">
+        <div class="grid-2" style="margin-bottom: 20px;">
+          <div>
+            <div style="font-weight: 600; margin-bottom: 10px;">Safe Annual Withdrawal (4% Rule)</div>
+            <div style="font-size: 32px; font-weight: 700; color: #667eea;" id="safeWithdrawal">$0</div>
+            <div style="color: #666; font-size: 14px; margin-top: 5px;" id="safeMonthly">$0/month</div>
+          </div>
+          
+          <div>
+            <div style="font-weight: 600; margin-bottom: 10px;">YTD Withdrawn</div>
+            <div style="font-size: 32px; font-weight: 700;" id="ytdWithdrawn">$0</div>
+            <div style="color: #666; font-size: 14px; margin-top: 5px;" id="remainingThisYear">$0 remaining this year</div>
+          </div>
+        </div>
+        
+        <div class="progress-bar">
+          <div class="progress-fill" id="withdrawalProgress" style="width: 0%"></div>
+        </div>
+        <div style="text-align: center; margin-top: 5px; font-size: 13px; color: #666;" id="withdrawalProgressText">0% of safe withdrawal used</div>
+        
+        <!-- Withdrawal Impact Analysis -->
+        <div id="withdrawalImpact" style="margin-top: 30px; padding: 20px; border-radius: 12px; border: 2px solid #e0e0e0;">
+          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #333;">📊 Withdrawal Impact Analysis</h3>
+          <div id="withdrawalImpactContent">
+            <div style="text-align: center; color: #999;">Calculating...</div>
+          </div>
+        </div>
+        
+        <!-- Recent Withdrawals List -->
+        <div style="margin-top: 30px;">
+          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #333;">📋 Recent Withdrawals</h3>
+          <div id="recentWithdrawalsTable">
+            <div style="text-align: center; padding: 20px; color: #999;">
+              Loading withdrawals...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- Add Position Modal -->
+  <div class="modal" id="addPositionModal">
+    <div class="modal-content">
+      <div class="modal-header">Add Position</div>
+      
+      <!-- Cash Balance Display -->
+      <div id="modalCashBalance" style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 12px 16px; margin-bottom: 20px; border-radius: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 13px; color: #666;">💰 Available Cash:</div>
+          <div id="modalCashAmount" style="font-size: 18px; font-weight: 700; color: #3b82f6;">$0.00</div>
+        </div>
+        <div id="estimatedCost" style="font-size: 12px; color: #999; margin-top: 4px; display: none;">
+          Estimated cost: <span id="estimatedCostAmount" style="font-weight: 600; color: #666;">$0.00</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Symbol/Ticker</label>
+        <div style="position: relative;">
+          <input type="text" class="form-input" id="symbolInput" placeholder="Start typing... (Apple, Microsoft, Tesla)" autocomplete="off" oninput="searchSymbols(this.value)" />
+          <div id="symbolDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #667eea; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 100; margin-top: 4px;"></div>
+        </div>
+      </div>
+      
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input type="number" class="form-input" id="quantityInput" placeholder="10" step="0.01" />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Purchase Price (per share)</label>
+          <input type="number" class="form-input" id="priceInput" placeholder="250.00" step="0.01" style="width: 100%; font-size: 18px; padding: 16px; font-weight: 600;" />
+          <button type="button" class="btn btn-primary" onclick="useCurrentPrice()" style="width: 100%; margin-top: 10px; padding: 14px; font-size: 14px; font-weight: 600;">
+            🔄 Fetch Current Market Price
+          </button>
+          <div id="currentPriceInfo" style="font-size: 13px; color: #666; margin-top: 8px; padding: 10px; background: #f5f5f5; border-radius: 6px;"></div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Purchase Date</label>
+        <input type="date" class="form-input" id="dateInput" />
+      </div>
+      
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Market</label>
+          <select class="form-select" id="marketInput">
+            <option value="US">US</option>
+            <option value="NSE">NSE (Kenya)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Asset Type</label>
+          <select class="form-select" id="assetTypeInput">
+            <option value="stock">Stock</option>
+            <option value="fund">Mutual Fund</option>
+            <option value="bond">Bond</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Notes (optional)</label>
+        <input type="text" class="form-input" id="notesInput" placeholder="Dollar-cost averaging..." />
+      </div>
+      
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeAddPositionModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="addPosition()">Add Position</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Deposit Modal -->
+  <div class="modal" id="depositModal">
+    <div class="modal-content">
+      <div class="modal-header">💵 Deposit Cash</div>
+      
+      <div class="form-group">
+        <label class="form-label">Amount to Deposit</label>
+        <input type="number" class="form-input" id="depositAmountInput" placeholder="5000.00" step="0.01" />
+        <small style="color: #666; margin-top: 5px; display: block;">This adds liquid cash to your account for buying stocks</small>
+      </div>
+      
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeDepositModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="depositCash()">Deposit</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Withdrawal Modal -->
+  <div class="modal" id="withdrawalModal">
+    <div class="modal-content">
+      <div class="modal-header">Record Withdrawal</div>
+      
+      <div class="form-group">
+        <label class="form-label">Amount</label>
+        <input type="number" class="form-input" id="withdrawalAmountInput" placeholder="5000.00" step="0.01" />
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select class="form-select" id="withdrawalTypeInput">
+          <option value="general">General Withdrawal</option>
+          <option value="planned">Planned Withdrawal</option>
+          <option value="emergency">Emergency</option>
+          <option value="rebalance">Rebalancing</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Notes (optional)</label>
+        <input type="text" class="form-input" id="withdrawalNotesInput" placeholder="Monthly living expenses..." />
+      </div>
+      
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeWithdrawalModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="recordWithdrawal()">Record</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const currencySymbols = { USD: '$', KES: 'KSh ' };
+    const USD_TO_KES_RATE = 130;
+    let preferredCurrency = localStorage.getItem('preferredCurrency') || 'KES';
+    let currentCurrencySymbol = currencySymbols[preferredCurrency] || '$';
+
+    function getCurrencySymbol() {
+      return currentCurrencySymbol || currencySymbols[preferredCurrency] || '$';
+    }
+
+    function convertBaseToDisplay(amount) {
+      const num = Number(amount || 0);
+      return preferredCurrency === 'KES' ? num * USD_TO_KES_RATE : num;
+    }
+
+    function convertDisplayToBase(amount) {
+      const num = Number(amount || 0);
+      return preferredCurrency === 'KES' ? num / USD_TO_KES_RATE : num;
+    }
+
+    function formatCurrency(value, { showSign = false } = {}) {
+      const num = Number(value || 0);
+      const symbol = getCurrencySymbol();
+      const formatted = Math.abs(num).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const prefix = showSign ? (num >= 0 ? '+' : '-') : (num < 0 ? '-' : '');
+      return `${prefix}${symbol}${formatted}`;
+    }
+
+    function setPreferredCurrency(currency) {
+      const normalized = (currency || 'USD').toUpperCase();
+      if (preferredCurrency === normalized) {
+        return;
+      }
+      preferredCurrency = normalized;
+      localStorage.setItem('preferredCurrency', normalized);
+      updateCurrencyToggleUI();
+    updateCurrencyToggleUI();
+    loadPortfolioData();
+    }
+
+    function updateCurrencyToggleUI() {
+      ['USD', 'KES'].forEach(code => {
+        const btn = document.getElementById(`currency${code}`);
+        if (btn) {
+          if (preferredCurrency === code) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    // Stock database for autocomplete
+    const stockDatabase = [
+      // US Megacap Tech
+      { symbol: 'AAPL', name: 'Apple Inc.', market: 'US' },
+      { symbol: 'MSFT', name: 'Microsoft Corporation', market: 'US' },
+      { symbol: 'GOOGL', name: 'Alphabet Inc. (Google)', market: 'US' },
+      { symbol: 'AMZN', name: 'Amazon.com Inc.', market: 'US' },
+      { symbol: 'TSLA', name: 'Tesla Inc.', market: 'US' },
+      { symbol: 'NVDA', name: 'NVIDIA Corporation', market: 'US' },
+      { symbol: 'META', name: 'Meta Platforms (Facebook)', market: 'US' },
+      { symbol: 'NFLX', name: 'Netflix Inc.', market: 'US' },
+      { symbol: 'AMD', name: 'Advanced Micro Devices', market: 'US' },
+      { symbol: 'INTC', name: 'Intel Corporation', market: 'US' },
+      { symbol: 'ADBE', name: 'Adobe Inc.', market: 'US' },
+      { symbol: 'CRM', name: 'Salesforce, Inc.', market: 'US' },
+
+      // US Financials & Payments
+      { symbol: 'JPM', name: 'JPMorgan Chase & Co.', market: 'US' },
+      { symbol: 'BAC', name: 'Bank of America Corp.', market: 'US' },
+      { symbol: 'GS', name: 'Goldman Sachs Group', market: 'US' },
+      { symbol: 'V', name: 'Visa Inc.', market: 'US' },
+      { symbol: 'MA', name: 'Mastercard Inc.', market: 'US' },
+      { symbol: 'PYPL', name: 'PayPal Holdings', market: 'US' },
+
+      // US Staples & Healthcare
+      { symbol: 'WMT', name: 'Walmart Inc.', market: 'US' },
+      { symbol: 'COST', name: 'Costco Wholesale', market: 'US' },
+      { symbol: 'PG', name: 'Procter & Gamble Co.', market: 'US' },
+      { symbol: 'KO', name: 'Coca-Cola Company', market: 'US' },
+      { symbol: 'PEP', name: 'PepsiCo, Inc.', market: 'US' },
+      { symbol: 'JNJ', name: 'Johnson & Johnson', market: 'US' },
+      { symbol: 'PFE', name: 'Pfizer Inc.', market: 'US' },
+      { symbol: 'MRK', name: 'Merck & Co.', market: 'US' },
+      
+      // US Industrials & Travel
+      { symbol: 'BA', name: 'Boeing Company', market: 'US' },
+      { symbol: 'CAT', name: 'Caterpillar Inc.', market: 'US' },
+      { symbol: 'GE', name: 'General Electric', market: 'US' },
+      { symbol: 'ABNB', name: 'Airbnb, Inc.', market: 'US' },
+      { symbol: 'UBER', name: 'Uber Technologies, Inc.', market: 'US' },
+
+      // US Consumer & Media
+      { symbol: 'DIS', name: 'The Walt Disney Company', market: 'US' },
+      { symbol: 'NKE', name: 'Nike, Inc.', market: 'US' },
+      { symbol: 'SBUX', name: 'Starbucks Corporation', market: 'US' },
+      { symbol: 'TGT', name: 'Target Corporation', market: 'US' },
+
+      // Core NSE Listings
+      { symbol: 'SCOM', name: 'Safaricom (Kenya)', market: 'NSE' },
+      { symbol: 'EQTY', name: 'Equity Bank (Kenya)', market: 'NSE' },
+      { symbol: 'KCB', name: 'KCB Group (Kenya)', market: 'NSE' },
+      { symbol: 'EABL', name: 'East African Breweries (Kenya)', market: 'NSE' }
+    ];
+    
+    let selectedStock = null;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPortfolioData();
+      // Set today's date as default
+      document.getElementById('dateInput').valueAsDate = new Date();
+    });
+    
+    // Symbol search with autocomplete
+    function searchSymbols(query) {
+      const dropdown = document.getElementById('symbolDropdown');
+      
+      if (!query || query.length < 1) {
+        dropdown.style.display = 'none';
+        return;
+      }
+      
+      const searchTerm = query.toLowerCase();
+      const matches = stockDatabase.filter(stock => 
+        stock.symbol.toLowerCase().includes(searchTerm) ||
+        stock.name.toLowerCase().includes(searchTerm)
+      );
+      
+      if (matches.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+      }
+      
+      let html = '';
+      matches.slice(0, 8).forEach(stock => {
+        html += `
+          <div style="padding: 12px; cursor: pointer; border-bottom: 1px solid #f0f0f0; transition: background 0.2s;"
+               onmouseover="this.style.background='#f5f7ff'"
+               onmouseout="this.style.background='white'"
+               onclick="selectStock('${stock.symbol}', '${stock.name}', '${stock.market}')">
+            <div style="font-weight: 600; color: #333;">${stock.symbol}</div>
+            <div style="font-size: 12px; color: #666;">${stock.name} • ${stock.market}</div>
+          </div>
+        `;
+      });
+      
+      dropdown.innerHTML = html;
+      dropdown.style.display = 'block';
+    }
+    
+    function selectStock(symbol, name, market) {
+      document.getElementById('symbolInput').value = symbol;
+      document.getElementById('symbolDropdown').style.display = 'none';
+      document.getElementById('marketInput').value = market;
+      
+      selectedStock = { symbol, name, market };
+      
+      // Show helpful message
+      document.getElementById('currentPriceInfo').innerHTML = `
+        <span style="color: #667eea;">✓ Selected: ${name} (${market})</span>
+      `;
+      
+      // Auto-fetch price for US stocks
+      if (market === 'US') {
+        setTimeout(() => useCurrentPrice(), 300); // Auto-fetch after selection
+      } else {
+        // Show manual entry message for NSE
+        setTimeout(() => {
+          document.getElementById('currentPriceInfo').innerHTML = `
+            <div style="padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;">
+              <span style="color: #856404; font-weight: 600;">📝 Kenyan Stock - Manual Price Entry Required</span>
+              <br><small style="color: #666;">Enter the current NSE price in KSh above</small>
+            </div>
+          `;
+          document.getElementById('priceInput').focus();
+        }, 300);
+      }
+    }
+    
+    // Fetch and use current market price
+    async function useCurrentPrice() {
+      const symbol = document.getElementById('symbolInput').value.trim().toUpperCase();
+      const market = document.getElementById('marketInput').value;
+      
+      if (!symbol) {
+        alert('Please enter a symbol first');
+        return;
+      }
+      
+      if (market === 'NSE') {
+        document.getElementById('currentPriceInfo').innerHTML = `
+          <div style="padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;">
+            <span style="color: #856404; font-weight: 600;">📝 NSE/Kenyan Stock - Manual Entry</span>
+            <br><small style="color: #666;">Examples: SCOM (Safaricom), EQTY (Equity Bank), KCB, EABL</small>
+            <br><small style="color: #666;">💡 Enter current NSE price manually in the box above</small>
+          </div>
+        `;
+        document.getElementById('priceInput').focus();
+        return;
+      }
+      
+      try {
+        // Show loading
+        document.getElementById('currentPriceInfo').innerHTML = `
+          <span style="color: #667eea;">⏳ Fetching current price...</span>
+        `;
+        
+        // Fetch from backend proxy (uses FMP stable endpoint + server API key)
+        const response = await fetch(`/api/market/quote?symbol=${encodeURIComponent(symbol)}`, {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.detail || 'Quote fetch failed');
+        }
+        
+        const data = await response.json();
+        
+        if (data && data.price) {
+          const currentPrice = data.price;
+          const companyName = data.name || symbol;
+          const change = data.change_percent ?? data.change ?? 0;
+          const changeColor = change >= 0 ? '#2ecc71' : '#e74c3c';
+          
+          const displayPrice = convertBaseToDisplay(currentPrice);
+          document.getElementById('priceInput').value = displayPrice.toFixed(2);
+          
+          document.getElementById('currentPriceInfo').innerHTML = `
+            <div style="padding: 12px; background: white; border: 2px solid #2ecc71; border-radius: 8px;">
+              <div style="font-weight: 600; color: #333; margin-bottom: 5px; font-size: 14px;">${companyName}</div>
+              <div style="font-size: 18px; margin-bottom: 5px;">
+                <span style="color: #2ecc71; font-weight: 700;">✅ ${formatCurrency(displayPrice)}</span>
+                <span style="color: ${changeColor}; margin-left: 12px; font-weight: 600; font-size: 14px;">${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}%</span>
+              </div>
+              <div style="font-size: 11px; color: #2ecc71; font-weight: 600;">🔄 LIVE via PortfoliAI market API</div>
+            </div>
+          `;
+        } else {
+          document.getElementById('currentPriceInfo').innerHTML = `
+            <div style="padding: 10px; background: #fee; border: 1px solid #fcc; border-radius: 6px;">
+              <span style="color: #c00; font-weight: 600;">❌ Symbol "${symbol}" not found</span>
+              <br><small style="color: #666;">Check the ticker symbol or switch to NSE market for Kenyan stocks</small>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error fetching price:', error);
+        document.getElementById('currentPriceInfo').innerHTML = `
+          <span style="color: #e74c3c;">❌ ${error.message || 'Error fetching price. Try manually entering.'}</span>
+        `;
+      }
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('symbolDropdown');
+      const input = document.getElementById('symbolInput');
+      if (e.target !== input && e.target !== dropdown) {
+        dropdown.style.display = 'none';
+      }
+    });
+    
+    // Load portfolio data
+    async function loadPortfolioData() {
+      try {
+        console.log('📊 Loading portfolio data...');
+        
+        const response = await fetch(`/api/portfolio/summary?currency=${preferredCurrency}`, {
+          credentials: 'include'  // Send httpOnly cookies
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        if (data.currency_symbol) {
+          currentCurrencySymbol = data.currency_symbol;
+        } else {
+          currentCurrencySymbol = currencySymbols[preferredCurrency] || '$';
+        }
+        if (data.currency) {
+          preferredCurrency = data.currency;
+          localStorage.setItem('preferredCurrency', preferredCurrency);
+        }
+        updateCurrencyToggleUI();
+        
+        console.log('✅ Portfolio data loaded:', data);
+        
+        displayPortfolioOverview(data);
+        displayHealthScore(data.health);
+        displayHoldings(data.overview, data.top_holdings);
+        displayWithdrawal(data.withdrawal);
+        displayWithdrawalImpact(data.overview, data.withdrawal);
+        
+        // Load recent transactions and withdrawals
+        loadRecentTransactions();
+        loadRecentWithdrawals();
+        
+      } catch (error) {
+        console.error('❌ Error loading portfolio:', error);
+        
+        // If 401 error, redirect to login
+        if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+          console.log('Authentication failed, redirecting to login...');
+          window.location.href = '/login';
+          return;
+        }
+        
+        // Show other errors in UI
+        document.getElementById('holdingsTable').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon" style="color: #e74c3c;">⚠️</div>
+            <h3>Error Loading Portfolio</h3>
+            <p style="color: #666;">${error.message}</p>
+            <button class="btn btn-primary" onclick="loadPortfolioData()" style="margin-top: 20px;">Retry</button>
+          </div>
+        `;
+      }
+    }
+    
+    function displayPortfolioOverview(data) {
+      const overview = data.overview;
+      
+      // Display cash balance prominently
+      const cashBalance = overview.cash_balance || 0;
+      document.getElementById('cashBalance').textContent = formatCurrency(cashBalance);
+      
+      document.getElementById('totalValue').textContent = formatCurrency(overview.total_value || 0);
+      
+      // Show realized + unrealized + total P/L
+      const totalPL = overview.total_pl || 0;
+      const realizedPL = overview.realized_pl || 0;
+      const unrealizedPL = overview.unrealized_pl || 0;
+      
+      const plClass = totalPL >= 0 ? 'gain' : 'loss';
+      const plSign = totalPL >= 0 ? '+' : '';
+      
+      // Main P/L display with breakdown
+      const plBreakdown = `
+        ${formatCurrency(totalPL, { showSign: true })} (${plSign}${overview.total_pl_percent.toFixed(2)}%)
+        <br><span style="font-size: 11px; opacity: 0.8;">
+          Realized: ${formatCurrency(realizedPL, { showSign: true })} | 
+          Unrealized: ${formatCurrency(unrealizedPL, { showSign: true })}
+        </span>
+      `;
+      
+      document.getElementById('totalPL').innerHTML = `<span class="${plClass}">${plBreakdown}</span>`;
+      
+      document.getElementById('totalGain').innerHTML = `<span class="${plClass}">${formatCurrency(totalPL, { showSign: true })}</span>`;
+      document.getElementById('totalGainPercent').innerHTML = `<span class="${plClass}">${plSign}${overview.total_pl_percent.toFixed(2)}%</span>`;
+      
+      // Count unique holdings
+      const uniqueHoldings = data.top_holdings ? data.top_holdings.length : 0;
+      document.getElementById('holdingsCount').textContent = uniqueHoldings;
+      document.getElementById('positionsCount').textContent = `${overview.positions_count} positions`;
+    }
+    
+    function displayHealthScore(health) {
+      if (!health) return;
+      
+      document.getElementById('healthScore').textContent = health.total_score;
+      document.getElementById('healthScoreDisplay').textContent = health.total_score;
+      document.getElementById('healthRating').textContent = health.health_rating;
+      document.getElementById('healthRatingDisplay').textContent = health.health_rating;
+      
+      // Update dynamic circle colors based on health rating
+      const indicatorCircle = document.getElementById('healthIndicatorCircle');
+      const scoreCircle = document.getElementById('scoreCircle');
+      const healthRating = health.health_rating || '';
+      
+      if (healthRating.toLowerCase().includes('excellent')) {
+        indicatorCircle.style.background = '#2ecc71'; // Green
+        scoreCircle.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)'; // Green gradient
+      } else if (healthRating.toLowerCase().includes('good')) {
+        indicatorCircle.style.background = '#3498db'; // Blue
+        scoreCircle.style.background = 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)'; // Blue gradient
+      } else if (healthRating.toLowerCase().includes('fair')) {
+        indicatorCircle.style.background = '#f39c12'; // Orange
+        scoreCircle.style.background = 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)'; // Orange gradient
+      } else if (healthRating.toLowerCase().includes('improvement') || healthRating.toLowerCase().includes('attention')) {
+        indicatorCircle.style.background = '#e74c3c'; // Red
+        scoreCircle.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)'; // Red gradient
+      } else {
+        indicatorCircle.style.background = '#999'; // Gray (default)
+        scoreCircle.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; // Purple gradient (default)
+      }
+      
+      const insightsHtml = health.insights.map(insight => 
+        `<div class="insight-item">${insight}</div>`
+      ).join('');
+      document.getElementById('healthInsights').innerHTML = insightsHtml;
+    }
+    
+    function displayHoldings(overview, holdings) {
+      console.log('📊 Displaying holdings:', holdings);
+      
+      const holdingsContainer = document.getElementById('holdingsTable');
+      
+      if (!holdings || holdings.length === 0) {
+        // Show empty state
+        holdingsContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <h3>No positions yet</h3>
+            <p>Add your first position to start tracking</p>
+            <button class="btn btn-primary" onclick="openAddPositionModal()" style="margin-top: 20px;">+ Add Position</button>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Quantity</th>
+              <th>Avg Cost</th>
+              <th>Current Price</th>
+              <th>Value</th>
+              <th>P/L</th>
+              <th>Return %</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      holdings.forEach(holding => {
+        const plClass = holding.total_pl >= 0 ? 'gain' : 'loss';
+        const plSign = holding.total_pl >= 0 ? '+' : '';
+        
+        html += `
+          <tr>
+            <td>
+              <strong>${holding.symbol}</strong>
+              ${holding.entry_count > 1 ? `<br><span style="font-size: 11px; color: #999;">${holding.entry_count} entries</span>` : ''}
+            </td>
+            <td>${holding.total_quantity.toFixed(2)}</td>
+            <td>${formatCurrency(holding.average_cost)}</td>
+            <td style="position: relative;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <span style="font-weight: 600;">${formatCurrency(holding.current_price)}</span>
+                <button onclick="refreshPrice('${holding.symbol}', ${holding.current_price}, '${holding.price_source}')" 
+                        style="padding: 4px 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600;"
+                        title="${holding.price_source === 'manual' ? 'Update manual price' : 'Fetch live price from API'}">
+                  🔄
+                </button>
+              </div>
+              ${holding.price_source === 'manual' ? '<span style="font-size: 10px; color: #f39c12;">📝 Manual</span>' : '<span style="font-size: 10px; color: #2ecc71;">🔄 API</span>'}
+            </td>
+            <td>${formatCurrency(holding.current_value)}</td>
+            <td class="${plClass}"><strong>${formatCurrency(holding.total_pl, { showSign: true })}</strong></td>
+            <td class="${plClass}"><strong>${plSign}${holding.total_pl_percent.toFixed(2)}%</strong></td>
+            <td>
+              <button onclick="sellPosition('${holding.symbol}', ${holding.total_quantity}, ${holding.average_cost})" 
+                      style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                💸 Sell
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      html += `
+          </tbody>
+        </table>
+      `;
+      
+      holdingsContainer.innerHTML = html;
+      console.log('✅ Holdings table updated');
+    }
+    
+    function displayWithdrawal(withdrawal) {
+      if (!withdrawal) return;
+      
+      document.getElementById('safeWithdrawal').textContent = formatCurrency(withdrawal.safe_annual);
+      document.getElementById('safeMonthly').textContent = `${formatCurrency(withdrawal.safe_monthly)}/month`;
+      document.getElementById('ytdWithdrawn').textContent = formatCurrency(withdrawal.ytd_withdrawn);
+      document.getElementById('remainingThisYear').textContent = `${formatCurrency(withdrawal.remaining_this_year)} remaining`;
+      
+      const progress = (withdrawal.ytd_withdrawn / withdrawal.safe_annual) * 100;
+      document.getElementById('withdrawalProgress').style.width = `${Math.min(100, progress)}%`;
+      document.getElementById('withdrawalProgressText').textContent = `${progress.toFixed(1)}% of safe withdrawal used`;
+    }
+    
+    function displayWithdrawalImpact(overview, withdrawal) {
+      const realizedProfit = overview.realized_pl || 0;
+      const ytdWithdrawn = withdrawal.ytd_withdrawn || 0;
+      
+      // Calculate withdrawal vs profit
+      const profitAfterWithdrawals = realizedProfit - ytdWithdrawn;
+      const withdrawalRate = realizedProfit > 0 ? (ytdWithdrawn / realizedProfit * 100) : 0;
+      
+      let statusHtml = '';
+      let borderColor = '#e0e0e0';
+      let bgColor = '#f9f9f9';
+      
+      if (ytdWithdrawn === 0) {
+        // No withdrawals
+        statusHtml = `
+          <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 32px; margin-bottom: 10px;">💎</div>
+            <div style="font-weight: 600; color: #2ecc71; font-size: 16px; margin-bottom: 8px;">Fully Compounding</div>
+            <p style="color: #666; font-size: 14px; margin: 0;">You haven't withdrawn any profits yet. Your gains are reinvesting and compounding!</p>
+          </div>
+        `;
+        borderColor = '#2ecc71';
+        bgColor = '#f0fdf4';
+      } else if (profitAfterWithdrawals > 0) {
+        // Living off profits - GOOD!
+        statusHtml = `
+          <div style="padding: 15px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+              <div style="font-size: 36px;">✅</div>
+              <div>
+                <div style="font-weight: 700; color: #2ecc71; font-size: 16px;">Sustainable Withdrawals</div>
+                <div style="color: #666; font-size: 13px;">You're living off your profits!</div>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+              <div>
+                <div style="color: #999; font-size: 12px; margin-bottom: 4px;">Total Realized Profits</div>
+                <div style="font-size: 20px; font-weight: 700; color: #2ecc71;">${formatCurrency(realizedProfit, { showSign: true })}</div>
+              </div>
+              <div>
+                <div style="color: #999; font-size: 12px; margin-bottom: 4px;">Total Withdrawn (YTD)</div>
+                <div style="font-size: 20px; font-weight: 700; color: #3498db;">${formatCurrency(-ytdWithdrawn)}</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 8px; border: 2px solid #2ecc71;">
+              <div style="font-size: 13px; color: #666; margin-bottom: 4px;">Profit Retained</div>
+              <div style="font-size: 24px; font-weight: 700; color: #2ecc71;">${formatCurrency(profitAfterWithdrawals, { showSign: true })}</div>
+              <div style="font-size: 12px; color: #2ecc71; margin-top: 4px;">
+                💰 ${withdrawalRate.toFixed(1)}% of profits withdrawn • ${(100 - withdrawalRate).toFixed(1)}% retained
+              </div>
+            </div>
+            
+            <div style="margin-top: 12px; padding: 10px; background: #e8f5e9; border-radius: 6px;">
+              <div style="font-size: 12px; color: #27ae60; font-weight: 600;">✅ Principal Protected</div>
+              <div style="font-size: 11px; color: #666; margin-top: 4px;">Your withdrawals are covered by profits. Original investment is intact!</div>
+            </div>
+          </div>
+        `;
+        borderColor = '#2ecc71';
+        bgColor = '#f0fdf4';
+      } else if (profitAfterWithdrawals === 0) {
+        // Withdrawn exactly the profits
+        statusHtml = `
+          <div style="padding: 15px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+              <div style="font-size: 36px;">⚠️</div>
+              <div>
+                <div style="font-weight: 700; color: #f39c12; font-size: 16px;">Breakeven Point</div>
+                <div style="color: #666; font-size: 13px;">You've withdrawn all your profits</div>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div>
+                <div style="color: #999; font-size: 12px; margin-bottom: 4px;">Total Profits</div>
+                <div style="font-size: 20px; font-weight: 700; color: #f39c12;">${formatCurrency(realizedProfit, { showSign: true })}</div>
+              </div>
+              <div>
+                <div style="color: #999; font-size: 12px; margin-bottom: 4px;">Withdrawn</div>
+                <div style="font-size: 20px; font-weight: 700; color: #f39c12;">${formatCurrency(-ytdWithdrawn)}</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-radius: 6px; border: 2px solid #f39c12;">
+              <div style="font-size: 12px; color: #856404; font-weight: 600;">⚠️ 100% of profits withdrawn</div>
+              <div style="font-size: 11px; color: #666; margin-top: 4px;">Any further withdrawals will reduce your original investment.</div>
+            </div>
+          </div>
+        `;
+        borderColor = '#f39c12';
+        bgColor = '#fffbf0';
+      } else {
+        // Eating into principal - BAD!
+        const principalReduction = Math.abs(profitAfterWithdrawals);
+        statusHtml = `
+          <div style="padding: 15px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+              <div style="font-size: 36px;">🚨</div>
+              <div>
+                <div style="font-weight: 700; color: #e74c3c; font-size: 16px;">Principal At Risk</div>
+                <div style="color: #666; font-size: 13px;">Withdrawals exceed profits</div>
+              </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div>
+                <div style="color: #999; font-size: 12px; margin-bottom: 4px;">Total Profits</div>
+                <div style="font-size: 20px; font-weight: 700; color: #2ecc71;">${formatCurrency(realizedProfit, { showSign: true })}</div>
+              </div>
+              <div>
+                <div style="color: #999; font-size: 12px; margin-bottom: 4px;">Withdrawn</div>
+                <div style="font-size: 20px; font-weight: 700; color: #e74c3c;">${formatCurrency(-ytdWithdrawn)}</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 15px; background: #fee; border-radius: 8px; border: 2px solid #e74c3c;">
+              <div style="font-size: 14px; font-weight: 700; color: #c00; margin-bottom: 8px;">
+                🚨 Reduced Principal by ${formatCurrency(-principalReduction)}
+              </div>
+              <div style="font-size: 12px; color: #666; line-height: 1.5;">
+                You've withdrawn <strong>${formatCurrency(ytdWithdrawn - realizedProfit)}</strong> more than your profits.
+                This reduces your original investment and future growth potential.
+              </div>
+            </div>
+            
+            <div style="margin-top: 12px; padding: 10px; background: #fff3f3; border-radius: 6px; border-left: 4px solid #e74c3c;">
+              <div style="font-size: 12px; color: #c00; font-weight: 600;">💡 Recommendation</div>
+              <div style="font-size: 11px; color: #666; margin-top: 4px;">
+                Consider reducing withdrawals or selling positions at a profit to restore your capital base.
+              </div>
+            </div>
+          </div>
+        `;
+        borderColor = '#e74c3c';
+        bgColor = '#fff5f5';
+      }
+      
+      // Update the impact section
+      const impactContainer = document.getElementById('withdrawalImpact');
+      impactContainer.style.borderColor = borderColor;
+      impactContainer.style.background = bgColor;
+      document.getElementById('withdrawalImpactContent').innerHTML = statusHtml;
+    }
+    
+    // Load and display recent withdrawals
+    async function loadRecentWithdrawals() {
+      try {
+        const response = await fetch(`/api/portfolio/withdrawals/recent?currency=${preferredCurrency}`, {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          document.getElementById('recentWithdrawalsTable').innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #999;">
+              <p>Unable to load withdrawal history</p>
+            </div>
+          `;
+          return;
+        }
+        
+        const data = await response.json();
+        const withdrawals = data.withdrawals || [];
+        
+        const container = document.getElementById('recentWithdrawalsTable');
+        
+        if (withdrawals.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 20px; color: #999; background: #f9f9f9; border-radius: 8px;">
+              <div style="font-size: 24px; margin-bottom: 8px;">📭</div>
+              <p style="margin: 0;">No withdrawals recorded yet</p>
+              <small style="color: #aaa;">Your withdrawal history will appear here</small>
+            </div>
+          `;
+          return;
+        }
+        
+        let html = `
+          <table style="width: 100%;">
+            <thead>
+              <tr>
+                <th style="text-align: left;">Date</th>
+                <th style="text-align: left;">Type</th>
+                <th style="text-align: right;">Amount</th>
+                <th style="text-align: left;">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        withdrawals.forEach(w => {
+          const typeColors = {
+            'general': '#3498db',
+            'planned': '#2ecc71',
+            'emergency': '#e74c3c',
+            'rebalance': '#f39c12'
+          };
+          
+          const typeEmojis = {
+            'general': '💵',
+            'planned': '📅',
+            'emergency': '🚨',
+            'rebalance': '⚖️'
+          };
+          
+          const color = typeColors[w.withdrawal_type] || '#666';
+          const emoji = typeEmojis[w.withdrawal_type] || '💰';
+          
+          html += `
+            <tr style="border-bottom: 1px solid #f0f0f0;">
+              <td style="padding: 12px 8px; color: #666;">${new Date(w.withdrawal_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+              <td style="padding: 12px 8px;">
+                <span style="color: ${color}; font-weight: 600; font-size: 13px;">
+                  ${emoji} ${w.withdrawal_type.charAt(0).toUpperCase() + w.withdrawal_type.slice(1)}
+                </span>
+              </td>
+              <td style="padding: 12px 8px; text-align: right; font-weight: 700; color: #e74c3c; font-size: 15px;">
+                ${formatCurrency(-parseFloat(w.amount || 0))}
+              </td>
+              <td style="padding: 12px 8px; color: #999; font-size: 13px;">${w.notes || '-'}</td>
+            </tr>
+          `;
+        });
+        
+        html += `
+            </tbody>
+          </table>
+        `;
+        
+        container.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading withdrawals:', error);
+        document.getElementById('recentWithdrawalsTable').innerHTML = `
+          <div style="text-align: center; padding: 20px; color: #e74c3c;">
+            Error loading withdrawal history
+          </div>
+        `;
+      }
+    }
+    
+    // Load and display recent transactions
+    async function loadRecentTransactions() {
+      try {
+        const response = await fetch(`/api/portfolio/transactions/recent?currency=${preferredCurrency}`, {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        const transactions = data.transactions || [];
+        
+        const container = document.getElementById('transactionsTable');
+        
+        if (transactions.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: #999;">
+              <div style="font-size: 32px; margin-bottom: 10px;">📭</div>
+              <p>No transactions yet</p>
+              <small>Your buy/sell history will appear here</small>
+            </div>
+          `;
+          return;
+        }
+        
+        let html = `
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Symbol</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Profit/Loss</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        transactions.forEach(txn => {
+          const typeEmoji = {
+            'buy': '🛒',
+            'sell': '💸',
+            'deposit': '💵',
+            'withdrawal': '🏧'
+          };
+          
+          const typeColor = {
+            'buy': '#3498db',
+            'sell': '#e74c3c',
+            'deposit': '#2ecc71',
+            'withdrawal': '#f39c12'
+          };
+          
+          const plDisplay = txn.realized_pl ? 
+            `<span class="${txn.realized_pl >= 0 ? 'gain' : 'loss'}">
+              ${formatCurrency(txn.realized_pl, { showSign: true })}
+              <br><small>(${txn.realized_pl_percent >= 0 ? '+' : ''}${txn.realized_pl_percent.toFixed(1)}%)</small>
+            </span>` : '-';
+          
+          html += `
+            <tr>
+              <td>${new Date(txn.date).toLocaleDateString()}</td>
+              <td><span style="color: ${typeColor[txn.type] || '#666'}; font-weight: 600;">${typeEmoji[txn.type] || ''} ${txn.type.toUpperCase()}</span></td>
+              <td><strong>${txn.symbol || '-'}</strong></td>
+              <td>${txn.quantity ? txn.quantity.toFixed(2) : '-'}</td>
+              <td>${txn.price ? formatCurrency(txn.price) : '-'}</td>
+              <td>${formatCurrency(txn.amount)}</td>
+              <td>${plDisplay}</td>
+            </tr>
+          `;
+        });
+        
+        html += `
+            </tbody>
+          </table>
+        `;
+        
+        container.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading transactions:', error);
+      }
+    }
+    
+    // Modal functions
+    function openAddPositionModal() {
+      document.getElementById('addPositionModal').classList.add('active');
+      
+      // Update cash balance display in modal
+      updateModalCashBalance();
+      
+      // Add listeners for real-time cost calculation
+      document.getElementById('quantityInput').addEventListener('input', calculateEstimatedCost);
+      document.getElementById('priceInput').addEventListener('input', calculateEstimatedCost);
+    }
+    
+    function updateModalCashBalance() {
+      // Get cash balance from the main display
+      const cashBalanceText = document.getElementById('cashBalance')?.textContent || '$0.00';
+      document.getElementById('modalCashAmount').textContent = cashBalanceText;
+    }
+    
+    function calculateEstimatedCost() {
+      const quantity = parseFloat(document.getElementById('quantityInput').value) || 0;
+      const price = parseFloat(document.getElementById('priceInput').value) || 0;
+      const estimatedCost = quantity * price;
+      
+      if (estimatedCost > 0) {
+        document.getElementById('estimatedCost').style.display = 'block';
+        document.getElementById('estimatedCostAmount').textContent = formatCurrency(estimatedCost);
+        
+        // Get current cash balance
+        const cashText = document.getElementById('modalCashAmount').textContent.replace(/[^0-9.-]+/g, '');
+        const currentCash = parseFloat(cashText) || 0;
+        
+        // Show warning if insufficient
+        const costElement = document.getElementById('estimatedCost');
+        if (estimatedCost > currentCash) {
+          costElement.style.color = '#e74c3c';
+          costElement.style.fontWeight = '600';
+          document.getElementById('estimatedCostAmount').textContent = `${formatCurrency(estimatedCost)} ⚠️ Insufficient cash!`;
+        } else {
+          costElement.style.color = '#999';
+          costElement.style.fontWeight = 'normal';
+          document.getElementById('estimatedCostAmount').textContent = formatCurrency(estimatedCost);
+        }
+      } else {
+        document.getElementById('estimatedCost').style.display = 'none';
+      }
+    }
+    
+    function closeAddPositionModal() {
+      document.getElementById('addPositionModal').classList.remove('active');
+    }
+    
+    function openDepositModal() {
+      document.getElementById('depositModal').classList.add('active');
+    }
+    
+    function closeDepositModal() {
+      document.getElementById('depositModal').classList.remove('active');
+    }
+    
+    function openWithdrawalModal() {
+      document.getElementById('withdrawalModal').classList.add('active');
+    }
+    
+    function closeWithdrawalModal() {
+      document.getElementById('withdrawalModal').classList.remove('active');
+    }
+    
+    // Deposit cash into account
+    async function depositCash() {
+      const amountDisplay = parseFloat(document.getElementById('depositAmountInput').value);
+      const amountBase = convertDisplayToBase(amountDisplay);
+      
+      if (!amountDisplay || amountDisplay <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/portfolio/deposit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ amount: amountBase })
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Failed to deposit');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert(`✅ Cash balance increased by ${formatCurrency(amountDisplay)}`);
+          closeDepositModal();
+          document.getElementById('depositAmountInput').value = '';
+          await loadPortfolioData();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error depositing cash: ' + error.message);
+      }
+    }
+    
+    // Add position
+    async function addPosition() {
+      const positionForm = {
+        symbol: document.getElementById('symbolInput').value.toUpperCase(),
+        quantity: parseFloat(document.getElementById('quantityInput').value),
+        purchase_price: parseFloat(document.getElementById('priceInput').value),
+        purchase_date: document.getElementById('dateInput').value,
+        market: document.getElementById('marketInput').value,
+        asset_type: document.getElementById('assetTypeInput').value,
+        notes: document.getElementById('notesInput').value
+      };
+
+      const assetTypeMap = {
+        stock: 'stock',
+        bond: 'bond',
+        fund: 'other'
+      };
+      positionForm.asset_type = assetTypeMap[positionForm.asset_type] || 'other';
+      
+      if (!positionForm.symbol || !positionForm.quantity || !positionForm.purchase_price) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const requestBody = {
+        ...positionForm,
+        purchase_price: convertDisplayToBase(positionForm.purchase_price)
+      };
+      
+      try {
+        const response = await fetch('/api/portfolio/position/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',  // Send httpOnly cookies
+          body: JSON.stringify(requestBody)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Show success message
+          const successMsg = `✅ Added ${positionForm.quantity} units of ${positionForm.symbol} @ ${formatCurrency(positionForm.purchase_price)}`;
+          alert(successMsg);
+          
+          // Close modal
+          closeAddPositionModal();
+          
+          // Clear form
+          document.getElementById('symbolInput').value = '';
+          document.getElementById('quantityInput').value = '';
+          document.getElementById('priceInput').value = '';
+          document.getElementById('notesInput').value = '';
+          document.getElementById('currentPriceInfo').innerHTML = '';
+          selectedStock = null;
+          
+          // IMPORTANT: Reload portfolio data to update UI
+          await loadPortfolioData();
+          
+        } else {
+          // Check if it's an insufficient cash error
+          const errorMsg = result.detail || result.message || 'Unknown error';
+          
+          if (errorMsg.includes('Insufficient cash')) {
+            // Parse the amounts from error message
+            const needMatch = errorMsg.match(/Need \$([0-9,.]+)/);
+            const haveMatch = errorMsg.match(/have \$([0-9,.]+)/);
+            
+            const neededBase = needMatch ? parseFloat(needMatch[1].replace(',', '')) : positionForm.quantity * positionForm.purchase_price;
+            const currentBase = haveMatch ? parseFloat(haveMatch[1].replace(',', '')) : 0;
+            const shortfallBase = neededBase - currentBase;
+            const neededDisplay = convertBaseToDisplay(neededBase);
+            const currentDisplay = convertBaseToDisplay(currentBase);
+            const shortfallDisplay = convertBaseToDisplay(shortfallBase);
+            
+            // Show detailed insufficient cash message
+            const shouldDeposit = confirm(
+              `💰 INSUFFICIENT CASH\n\n` +
+              `You're trying to buy:\n` +
+              `${positionForm.quantity} shares of ${positionForm.symbol} @ ${formatCurrency(positionForm.purchase_price)}\n` +
+              `Total cost: ${formatCurrency(neededDisplay)}\n\n` +
+              `Your cash balance: ${formatCurrency(currentDisplay)}\n` +
+              `You need: ${formatCurrency(shortfallDisplay)} more\n\n` +
+              `Click OK to deposit cash now, or Cancel to go back.`
+            );
+            
+            if (shouldDeposit) {
+              // Close add position modal
+              closeAddPositionModal();
+              
+              // Open deposit modal with suggested amount
+              openDepositModal();
+              
+              // Pre-fill deposit amount with needed amount (rounded up to nearest 100)
+              const suggestedDeposit = Math.ceil(shortfallDisplay / 100) * 100;
+              document.getElementById('depositAmountInput').value = suggestedDeposit;
+              
+              // Highlight the deposit amount field
+              document.getElementById('depositAmountInput').focus();
+              document.getElementById('depositAmountInput').select();
+            }
+          } else {
+            // Other errors
+            alert('❌ Error adding position:\n\n' + errorMsg);
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        
+        // Handle server errors
+        if (error.message) {
+          alert('❌ Error adding position:\n\n' + error.message);
+        } else {
+          alert('❌ Error adding position. Please try again.');
+        }
+      }
+    }
+    
+    // Refresh price - API for US stocks, Manual for NSE stocks
+    async function refreshPrice(symbol, currentPrice, priceSource) {
+      if (priceSource === 'manual') {
+        // Manual entry for NSE/Kenyan stocks
+        const newPrice = prompt(`Update current price for ${symbol}:\n\n💡 Current: ${formatCurrency(currentPrice)}\n📝 NSE/Kenyan Stock - Manual Entry\n\nEnter new price:`, currentPrice.toFixed(2));
+        
+        if (!newPrice || parseFloat(newPrice) <= 0) {
+          return;
+        }
+        
+        try {
+          const response = await fetch('/api/portfolio/price/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              symbol: symbol,
+              price: convertDisplayToBase(parseFloat(newPrice)),
+              is_manual: true  // Manually entered
+            })
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Failed to update price');
+          }
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            alert(`✅ ${result.message}\n\nPrice updated from ${currentPrice.toFixed(2)} to ${newPrice}`);
+            await loadPortfolioData(); // Auto-refresh
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error updating price: ' + error.message);
+        }
+      } else {
+        // Fetch from API for US stocks
+        try {
+          // Show loading indicator (you could add a spinner here)
+          const response = await fetch(`https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${await getFMPKey()}`);
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            const newPrice = data[0].price;
+            const change = data[0].changesPercentage;
+            
+            // Update price in database
+            const updateResponse = await fetch('/api/portfolio/price/update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({
+                symbol: symbol,
+                price: newPrice,
+                is_manual: false  // Fetched from API
+              })
+            });
+            
+            if (updateResponse.ok) {
+              const changeEmoji = change >= 0 ? '📈' : '📉';
+              const changeText = change >= 0 ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`;
+              alert(`✅ ${symbol} price updated!\n\n🔄 Live from API: ${formatCurrency(newPrice)}\n${changeEmoji} ${changeText} today`);
+              await loadPortfolioData(); // Auto-refresh
+            }
+          } else {
+            alert(`❌ Could not fetch live price for ${symbol}\n\nYou can update it manually if needed.`);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error fetching live price: ' + error.message);
+        }
+      }
+    }
+    
+    // Sell position
+    async function sellPosition(symbol, maxQuantity, avgCost) {
+      const quantityStr = prompt(`How many shares of ${symbol} do you want to sell?\n\nYou have: ${maxQuantity.toFixed(2)} shares\nAverage cost: ${formatCurrency(avgCost)}/share`, maxQuantity);
+      
+      if (!quantityStr || parseFloat(quantityStr) <= 0) {
+        return;
+      }
+      
+      const quantity = parseFloat(quantityStr);
+      
+      const sellPriceStr = prompt(`Sell price per share for ${symbol}?\n\n💡 Your average cost: ${formatCurrency(avgCost)}\n📊 Enter sell price:`, avgCost.toFixed(2));
+      
+      if (!sellPriceStr || parseFloat(sellPriceStr) <= 0) {
+        return;
+      }
+      
+      const sellPrice = parseFloat(sellPriceStr);
+      
+      // Calculate profit/loss preview
+      const costBasis = quantity * avgCost;
+      const saleProceeds = quantity * sellPrice;
+      const profitLoss = saleProceeds - costBasis;
+      const profitLossPct = (profitLoss / costBasis) * 100;
+      
+      const plEmoji = profitLoss >= 0 ? '📈' : '📉';
+      const plText = profitLoss >= 0 ? 'PROFIT' : 'LOSS';
+      
+      const confirmMsg = `${plEmoji} CONFIRM SALE:\n\n` +
+        `Selling: ${quantity} shares of ${symbol}\n` +
+        `Sell Price: ${formatCurrency(sellPrice)}/share\n` +
+        `Sale Proceeds: ${formatCurrency(saleProceeds)}\n\n` +
+        `Your Cost: ${formatCurrency(costBasis)}\n` +
+        `${plText}: ${formatCurrency(profitLoss, { showSign: true })} (${profitLossPct >= 0 ? '+' : ''}${profitLossPct.toFixed(2)}%)\n\n` +
+        `Proceed with sale?`;
+      
+      if (!confirm(confirmMsg)) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/portfolio/position/sell', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            symbol: symbol,
+            quantity: quantity,
+            sell_price: convertDisplayToBase(sellPrice)
+          })
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'Failed to sell');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          const profitMsg = profitLoss >= 0 
+            ? `📈 PROFIT: ${formatCurrency(profitLoss, { showSign: true })} (+${profitLossPct.toFixed(2)}%)`
+            : `📉 LOSS: ${formatCurrency(profitLoss)} (${profitLossPct.toFixed(2)}%)`;
+          
+          alert(`✅ ${result.message}\n\n${profitMsg}\n\nCash added to your account!`);
+          await loadPortfolioData();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error selling position: ' + error.message);
+      }
+    }
+    
+    // Record withdrawal
+    async function recordWithdrawal() {
+      const amountDisplay = parseFloat(document.getElementById('withdrawalAmountInput').value);
+      const data = {
+        amount: amountDisplay,
+        withdrawal_type: document.getElementById('withdrawalTypeInput').value,
+        notes: document.getElementById('withdrawalNotesInput').value
+      };
+
+      if (!amountDisplay || amountDisplay <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/portfolio/withdrawal/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',  // Send httpOnly cookies
+          body: JSON.stringify({
+            ...data,
+            amount: convertDisplayToBase(amountDisplay)
+          })
+        });
+        
+        console.log('Withdrawal response status:', response.status);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Withdrawal error:', errorData);
+          throw new Error(errorData.detail || `HTTP ${response.status}: Failed to record withdrawal`);
+        }
+        
+        const result = await response.json();
+        console.log('Withdrawal result:', result);
+        
+        if (result.success) {
+          alert(`✅ Recorded ${formatCurrency(amountDisplay)} withdrawal`);
+          
+          // Close modal
+          closeWithdrawalModal();
+          
+          // Clear form
+          document.getElementById('withdrawalAmountInput').value = '';
+          document.getElementById('withdrawalNotesInput').value = '';
+          
+          // IMPORTANT: Reload portfolio data to update UI
+          await loadPortfolioData();
+          
+        } else {
+          alert('Error recording withdrawal: ' + (result.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error recording withdrawal: ' + error.message);
+      }
+    }
+    
+    function refreshData() {
+      loadPortfolioData();
+    }
+    
+    async function runStressTest() {
+      try {
+        const response = await fetch(`/api/portfolio/withdrawal/plan?currency=${preferredCurrency}`, {
+          credentials: 'include'  // Send httpOnly cookies
+        });
+        const data = await response.json();
+        
+        let message = "STRESS TEST RESULTS:\n\n";
+        data.stress_test.scenarios.forEach(scenario => {
+          message += `${scenario.scenario} (${scenario.crash_percent}% drop):\n`;
+          message += `  Portfolio: ${formatCurrency(scenario.portfolio_after_crash)}\n`;
+          message += `  Status: ${scenario.status}\n`;
+          message += `  Action: ${scenario.recommended_action}\n\n`;
+        });
+        
+        message += `\nMONTE CARLO SIMULATION:\n`;
+        message += `Success Rate: ${data.monte_carlo.success_rate.toFixed(1)}%\n`;
+        message += `${data.monte_carlo.recommendation}`;
+        
+        alert(message);
+      } catch (error) {
+        alert('Error running stress test');
+      }
+    }
+    
+    async function checkRebalancing() {
+      // Placeholder - would fetch rebalancing data
+      alert('Rebalancing check - Coming soon!\n\nWill show:\n- Asset drift from targets\n- Recommended trades\n- Tax implications');
+    }
+    
+    function logout() {
+      fetch('/auth/logout', { method: 'POST' })
+        .then(() => {
+          window.location.href = '/';
+        });
+    }
+  </script>
+</body>
+</html>
+

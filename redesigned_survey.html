@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PortfoliAI - Discover Your Investor Profile</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    h1 {
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      margin: 30px 0;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .question {
+      margin-bottom: 35px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.5s forwards;
+    }
+    
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .question-number {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 28px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .question-text {
+      font-size: 18px;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .question-subtext {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+      padding-left: 38px;
+    }
+    
+    .options {
+      padding-left: 38px;
+    }
+    
+    .option {
+      display: block;
+      padding: 15px 20px;
+      margin-bottom: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .option:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+      transform: translateX(5px);
+    }
+    
+    .option input[type="radio"] {
+      margin-right: 12px;
+      cursor: pointer;
+      transform: scale(1.2);
+    }
+    
+    .option.selected {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      font-weight: 600;
+    }
+    
+    .slider-container {
+      padding-left: 38px;
+    }
+    
+    .slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 5px;
+      background: #e0e0e0;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      cursor: pointer;
+      border: none;
+    }
+    
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #666;
+    }
+    
+    .slider-value {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-top: 30px;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .result-card {
+      display: none;
+      padding: 30px;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      border-radius: 12px;
+      margin-top: 30px;
+      border: 2px solid #667eea;
+    }
+    
+    .result-card.show {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    
+    .result-score {
+      font-size: 48px;
+      font-weight: bold;
+      color: #667eea;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .result-category {
+      text-align: center;
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    
+    .result-persona {
+      text-align: center;
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    
+    .result-details {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    
+    .result-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .result-detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-label {
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .detail-value {
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .retry-btn {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.2s ease;
+    }
+    
+    .retry-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+    
+    .ai-cta-button:hover {
+      transform: scale(1.05) !important;
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6) !important;
+    }
+    
+    .ai-cta-button:active {
+      transform: scale(0.98) !important;
+    }
+    
+    .emoji {
+      font-size: 20px;
+      margin-left: 8px;
+    }
+    
+    .currency-amount {
+      display: inline-block;
+      font-weight: 700;
+      color: #667eea;
+      padding: 2px 6px;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .option .currency-amount {
+      font-weight: 600;
+      color: #333;
+      background: transparent;
+      padding: 0;
+    }
+    
+    .option:hover .currency-amount {
+      color: #667eea;
+    }
+    
+    .currency-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+    }
+    
+    .currency-label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .currency-toggle {
+      position: relative;
+      width: 80px;
+      height: 32px;
+      background: #e0e0e0;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    
+    .currency-toggle.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .currency-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 36px;
+      height: 24px;
+      background: white;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+      color: #667eea;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .currency-toggle.active .currency-slider {
+      transform: translateX(40px);
+    }
+    
+    @media (max-width: 768px) {
+      .currency-switcher {
+        top: 10px;
+        right: 10px;
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Currency Switcher -->
+  <div class="currency-switcher">
+    <span class="currency-label">Currency:</span>
+    <div class="currency-toggle" id="currencyToggle" onclick="toggleCurrency()">
+      <div class="currency-slider" id="currencySlider">USD</div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Discover Your Investor Profile</h1>
+      <p class="subtitle">Answer 13 quick questions to understand your investment personality and get personalized recommendations.</p>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-text" id="progressText">Question 0 of 13</div>
+    
+    <form id="surveyForm">
+      
+      <!-- Q1: Happiness Outcome -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">1</span>
+          If you invested <span class="currency-amount" data-usd="10000">$10,000</span> today, what outcome would make you happiest after one year?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="happiness_outcome" value="a" required>
+            <span class="emoji">😊</span> <span class="currency-amount" data-usd="10500">$10,500</span> — Safe and steady (5% return)
+          </label>
+          <label class="option">
+            <input type="radio" name="happiness_outcome" value="b">
+            <span class="emoji">😃</span> <span class="currency-amount" data-usd="11000">$11,000</span> — Balanced growth (10% return)
+          </label>
+          <label class="option">
+            <input type="radio" name="happiness_outcome" value="c">
+            <span class="emoji">🤩</span> <span class="currency-amount" data-usd="11500">$11,500+</span> — Maximum gains (15%+ return)
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q2: Investment Horizon -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">2</span>
+          How long are you comfortable leaving your money invested before needing it back?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="horizon" value="a" required>
+            <span class="emoji">⏱️</span> Less than 3 years — I might need it soon
+          </label>
+          <label class="option">
+            <input type="radio" name="horizon" value="b">
+            <span class="emoji">📅</span> 3-7 years — Medium-term goals
+          </label>
+          <label class="option">
+            <input type="radio" name="horizon" value="c">
+            <span class="emoji">🌟</span> 8+ years — Long-term wealth building
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q3: Risk Tolerance Slider -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">3</span>
+          How do you feel about investment risk?
+        </div>
+        <div class="slider-container">
+          <input type="range" min="1" max="10" value="5" class="slider" id="riskSlider" name="risk_slider" required>
+          <div class="slider-labels">
+            <span>😰 Avoid losses</span>
+            <span>🚀 Chase high returns</span>
+          </div>
+          <div class="slider-value" id="riskValue">5</div>
+        </div>
+      </div>
+      
+      <!-- Q4: Market Reaction -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">4</span>
+          If your investments suddenly fell by 15%, what's your most likely move?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="market_reaction" value="a" required>
+            <span class="emoji">😱</span> Sell everything — I can't handle the stress
+          </label>
+          <label class="option">
+            <input type="radio" name="market_reaction" value="b">
+            <span class="emoji">🤔</span> Wait and watch — Markets go up and down
+          </label>
+          <label class="option">
+            <input type="radio" name="market_reaction" value="c">
+            <span class="emoji">💪</span> Buy more — Great prices!
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q5: Financial Knowledge Slider -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">5</span>
+          How confident are you in understanding terms like ETFs, bonds, or diversification?
+        </div>
+        <div class="slider-container">
+          <input type="range" min="1" max="10" value="5" class="slider" id="knowledgeSlider" name="knowledge_slider" required>
+          <div class="slider-labels">
+            <span>🌱 Complete beginner</span>
+            <span>🎓 Expert investor</span>
+          </div>
+          <div class="slider-value" id="knowledgeValue">5</div>
+        </div>
+      </div>
+      
+      <!-- Q6: Income Stability -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">6</span>
+          How predictable is your income from month to month?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="income_stability" value="a" required>
+            <span class="emoji">🏢</span> Highly stable — Fixed salary
+          </label>
+          <label class="option">
+            <input type="radio" name="income_stability" value="b">
+            <span class="emoji">📊</span> Somewhat stable — Varies a bit
+          </label>
+          <label class="option">
+            <input type="radio" name="income_stability" value="c">
+            <span class="emoji">🎯</span> Irregular — Freelancer/Business owner
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q7: Investment Experience -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">7</span>
+          How long have you actively invested in markets (stocks, funds, crypto, etc.)?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="experience" value="a" required>
+            <span class="emoji">🆕</span> None — Just getting started
+          </label>
+          <label class="option">
+            <input type="radio" name="experience" value="b">
+            <span class="emoji">📈</span> 1-3 years — Learning the ropes
+          </label>
+          <label class="option">
+            <input type="radio" name="experience" value="c">
+            <span class="emoji">🏆</span> 4+ years — Experienced investor
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q8: Age Group -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">8</span>
+          Which age range best represents you?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="age_group" value="a" required>
+            <span class="emoji">🌟</span> 18-30 — Young investor
+          </label>
+          <label class="option">
+            <input type="radio" name="age_group" value="b">
+            <span class="emoji">💼</span> 31-50 — Mid-career professional
+          </label>
+          <label class="option">
+            <input type="radio" name="age_group" value="c">
+            <span class="emoji">🏖️</span> 51+ — Near/At retirement
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q9: Financial Goals -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">9</span>
+          What's your biggest motivation for investing?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="goal" value="a" required>
+            <span class="emoji">🛡️</span> Preserve my wealth — Safety first
+          </label>
+          <label class="option">
+            <input type="radio" name="goal" value="b">
+            <span class="emoji">⚖️</span> Grow steadily — Balanced approach
+          </label>
+          <label class="option">
+            <input type="radio" name="goal" value="c">
+            <span class="emoji">🚀</span> Maximize long-term returns — Go big!
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q10: Loss Tolerance -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">10</span>
+          Imagine you invested <span class="currency-amount" data-usd="10000">$10,000</span>. What's the biggest temporary loss you could handle emotionally?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="loss_tolerance" value="a" required>
+            <span class="emoji">😰</span> <span class="currency-amount" data-usd="500">$500</span> (5%) — I'd lose sleep over this
+          </label>
+          <label class="option">
+            <input type="radio" name="loss_tolerance" value="b">
+            <span class="emoji">😬</span> <span class="currency-amount" data-usd="1500">$1,500</span> (15%) — Uncomfortable but manageable
+          </label>
+          <label class="option">
+            <input type="radio" name="loss_tolerance" value="c">
+            <span class="emoji">😎</span> <span class="currency-amount" data-usd="3000">$3,000</span> (30%) — I can wait for recovery
+          </label>
+          <label class="option">
+            <input type="radio" name="loss_tolerance" value="d">
+            <span class="emoji">💪</span> <span class="currency-amount" data-usd="5000">$5,000+</span> (50%+) — Bring it on!
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q11: Liquidity Needs -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">11</span>
+          How important is it for you to withdraw your investments quickly without penalty?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="liquidity" value="a" required>
+            <span class="emoji">⚡</span> Very important — Need quick access
+          </label>
+          <label class="option">
+            <input type="radio" name="liquidity" value="b">
+            <span class="emoji">➡️</span> Somewhat important — Some flexibility needed
+          </label>
+          <label class="option">
+            <input type="radio" name="liquidity" value="c">
+            <span class="emoji">🔒</span> Not important — Can lock it up long-term
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q12: Diversification Preference -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">12</span>
+          Would you rather hold a few strong bets or spread across many assets?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="diversification" value="a" required>
+            <span class="emoji">🎯</span> Few focused bets — High conviction plays
+          </label>
+          <label class="option">
+            <input type="radio" name="diversification" value="b">
+            <span class="emoji">⚖️</span> Mix of both — Balanced approach
+          </label>
+          <label class="option">
+            <input type="radio" name="diversification" value="c">
+            <span class="emoji">🌐</span> Broad diversification — Spread the risk
+          </label>
+        </div>
+      </div>
+      
+      <!-- Q13: Monitoring Frequency -->
+      <div class="question">
+        <div class="question-text">
+          <span class="question-number">13</span>
+          How often do you like checking your investment's performance?
+        </div>
+        <div class="options">
+          <label class="option">
+            <input type="radio" name="monitoring" value="a" required>
+            <span class="emoji">😴</span> Once a year or less — Set and forget
+          </label>
+          <label class="option">
+            <input type="radio" name="monitoring" value="b">
+            <span class="emoji">📅</span> Quarterly (4 times/year)
+          </label>
+          <label class="option">
+            <input type="radio" name="monitoring" value="c">
+            <span class="emoji">📆</span> Monthly (12 times/year)
+          </label>
+          <label class="option">
+            <input type="radio" name="monitoring" value="d">
+            <span class="emoji">📊</span> Weekly (52 times/year)
+          </label>
+          <label class="option">
+            <input type="radio" name="monitoring" value="e">
+            <span class="emoji">📈</span> Daily or more — I love tracking!
+          </label>
+        </div>
+      </div>
+      
+      <button type="submit" class="submit-btn" id="submitBtn">
+        🎯 Discover My Investor Profile
+      </button>
+    </form>
+    
+    <!-- Results Card -->
+    <div class="result-card" id="resultCard">
+      <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Your Investor Profile</h2>
+      
+      <!-- Profile Update Success Message (shown if logged in) -->
+      <div id="profileUpdateSuccess" style="display: none; margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border-radius: 10px; text-align: center; font-weight: 600;">
+        ✅ Your profile has been updated! View it on your dashboard.
+      </div>
+      
+      <div class="result-score" id="resultScore">0.00</div>
+      <div class="result-category" id="resultCategory">Loading...</div>
+      <div class="result-persona" id="resultPersona">Analyzing...</div>
+      
+      <!-- Full Profile Card (LLM Generated) -->
+      <div id="fullProfileCard" style="display: none; margin-top: 30px; padding: 25px; background: white; border-radius: 12px; border: 2px solid #667eea; line-height: 1.8; color: #333;">
+      </div>
+      
+      <!-- Enhanced AI Consultant CTA -->
+      <div style="margin-top: 35px; padding: 35px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 16px; color: white; border: 2px solid #667eea;">
+        <div style="text-align: center; margin-bottom: 25px;">
+          <div style="font-size: 48px; margin-bottom: 10px;">🤖</div>
+          <h3 style="font-size: 28px; margin-bottom: 10px; font-weight: 700;">Your Personal AI Investment Consultant Awaits</h3>
+          <p style="font-size: 15px; opacity: 0.8; max-width: 500px; margin: 0 auto;">
+            This profile was just the beginning. Now get your AI-powered investment partner.
+          </p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+          <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+            <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+            <div style="font-weight: 600; font-size: 16px; margin-bottom: 6px;">Research Any Asset</div>
+            <div style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
+              Ask your AI: "Is Safaricom a good buy at KSh 14?" Get instant analysis with current financials.
+            </div>
+          </div>
+          
+          <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🎯</div>
+            <div style="font-weight: 600; font-size: 16px; margin-bottom: 6px;">Build Custom Strategies</div>
+            <div style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
+              "Create a KSh 500,000 portfolio for 5 years" — AI designs allocation, picks stocks, explains why.
+            </div>
+          </div>
+          
+          <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+            <div style="font-size: 32px; margin-bottom: 8px;">📈</div>
+            <div style="font-weight: 600; font-size: 16px; margin-bottom: 6px;">Track Performance Live</div>
+            <div style="font-size: 13px; opacity: 0.9; line-height: 1.4;">
+              Real-time portfolio tracking, gains/losses, rebalancing alerts tailored to YOUR risk profile.
+            </div>
+          </div>
+        </div>
+        
+        <div style="text-align: center;">
+          <button onclick="handleSignup()" class="ai-cta-button" style="padding: 18px 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; transform: scale(1);">
+            🚀 Activate My AI Investment Consultant
+          </button>
+          <p style="margin-top: 15px; font-size: 13px; opacity: 0.8; line-height: 1.5;">
+            Chat with AI • Research stocks • Build strategies • Track portfolio • Get alerts<br>
+            <strong>Personalized for your <span id="ctaPersona">Risk Seeker</span> profile</strong>
+          </p>
+        </div>
+      </div>
+      
+      <button class="retry-btn" onclick="location.reload()" style="margin-top: 20px;">
+        🔄 Retake Survey
+      </button>
+    </div>
+  </div>
+  
+  <script>
+    // Currency management
+    let currentCurrency = 'USD';
+    const exchangeRate = 130; // 1 USD = 130 KES (approximate)
+    
+    function formatCurrency(amount, currency) {
+      if (currency === 'USD') {
+        return '$' + amount.toLocaleString();
+      } else {
+        return 'KSh ' + (amount * exchangeRate).toLocaleString();
+      }
+    }
+    
+    function toggleCurrency() {
+      const toggle = document.getElementById('currencyToggle');
+      const slider = document.getElementById('currencySlider');
+      
+      if (currentCurrency === 'USD') {
+        currentCurrency = 'KES';
+        toggle.classList.add('active');
+        slider.textContent = 'KES';
+      } else {
+        currentCurrency = 'USD';
+        toggle.classList.remove('active');
+        slider.textContent = 'USD';
+      }
+      
+      updateAllCurrencyDisplays();
+    }
+    
+    function updateAllCurrencyDisplays() {
+      document.querySelectorAll('.currency-amount').forEach(elem => {
+        const usdAmount = parseInt(elem.dataset.usd);
+        elem.textContent = formatCurrency(usdAmount, currentCurrency);
+      });
+    }
+    
+    // Progress tracking
+    const form = document.getElementById('surveyForm');
+    const inputs = form.querySelectorAll('input');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const totalQuestions = 13;
+    
+    function updateProgress() {
+      const questions = form.querySelectorAll('.question');
+      let answered = 0;
+      
+      questions.forEach((question, index) => {
+        const questionInputs = question.querySelectorAll('input');
+        const isAnswered = Array.from(questionInputs).some(input => {
+          if (input.type === 'radio') return input.checked;
+          if (input.type === 'range') return true; // Sliders always have a value
+          return false;
+        });
+        
+        if (isAnswered) answered++;
+      });
+      
+      const progress = (answered / totalQuestions) * 100;
+      progressFill.style.width = progress + '%';
+      progressText.textContent = `Question ${answered} of ${totalQuestions}`;
+    }
+    
+    // Option selection styling
+    document.querySelectorAll('.option input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        // Remove selected class from all options in this group
+        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+          r.parentElement.classList.remove('selected');
+        });
+        // Add selected class to this option
+        this.parentElement.classList.add('selected');
+        updateProgress();
+      });
+    });
+    
+    // Slider value display
+    const riskSlider = document.getElementById('riskSlider');
+    const riskValue = document.getElementById('riskValue');
+    riskSlider.addEventListener('input', function() {
+      riskValue.textContent = this.value;
+      updateProgress();
+    });
+    
+    const knowledgeSlider = document.getElementById('knowledgeSlider');
+    const knowledgeValue = document.getElementById('knowledgeValue');
+    knowledgeSlider.addEventListener('input', function() {
+      knowledgeValue.textContent = this.value;
+      updateProgress();
+    });
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '🔄 Analyzing your profile...';
+      
+      // Collect form data
+      const formData = new FormData(form);
+      const data = {};
+      
+      // Convert FormData to JSON
+      for (let [key, value] of formData.entries()) {
+        if (key.includes('slider')) {
+          data[key] = parseInt(value);
+        } else {
+          data[key] = value;
+        }
+      }
+      
+      // Store responses globally for later use
+      surveyResponses = {...data};
+      
+      console.log('Sending survey data:', data);
+      
+      try {
+        // Call Profile Card API (includes risk prediction + LLM insights)
+        // Include credentials to update profile if user is logged in
+        const response = await fetch('/generate/profile-card?use_kenyan_context=true', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',  // Send cookies (access_token) if logged in
+          body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API error response:', errorText);
+          throw new Error(`API call failed: ${response.status} - ${errorText.substring(0, 100)}`);
+        }
+        
+        const result = await response.json();
+        console.log('Received result:', result);
+        
+        // Check if profile was updated (user is logged in)
+        const profileUpdated = result.profile_updated === true;
+        
+        // Show success message if profile was updated
+        if (profileUpdated) {
+          const successMsg = document.getElementById('profileUpdateSuccess');
+          if (successMsg) {
+            successMsg.style.display = 'block';
+          }
+          
+          // Update CTA button for logged-in users
+          const ctaButton = document.querySelector('.ai-cta-button');
+          if (ctaButton) {
+            ctaButton.textContent = '📊 View Updated Profile on Dashboard';
+            ctaButton.onclick = () => window.location.href = '/dashboard';
+          }
+        }
+        
+        // Display results
+        document.getElementById('resultScore').textContent = result.risk_score.toFixed(2);
+        document.getElementById('resultCategory').textContent = result.risk_category;
+        document.getElementById('resultPersona').textContent = '🎭 ' + result.persona;
+        
+        // Update CTA persona
+        document.getElementById('ctaPersona').textContent = result.persona;
+        
+        // Display LLM-generated profile card
+        const card = result.profile_card || {};
+        
+        // Show full profile card with formatted sections
+        const fullCardElement = document.getElementById('fullProfileCard');
+        
+        if (card.full_text && fullCardElement) {
+          const formattedText = card.full_text
+            .replace(/\n\n/g, '</p><p style="margin: 15px 0;">')
+            .replace(/\n/g, '<br>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #667eea;">$1</strong>')
+            .replace(/• /g, '<span style="color: #667eea;">●</span> ');
+          
+          fullCardElement.innerHTML = '<p style="margin: 15px 0;">' + formattedText + '</p>';
+          fullCardElement.style.display = 'block';
+        } else if (!fullCardElement) {
+          console.error('fullProfileCard element not found in DOM');
+        }
+        
+        // Show results
+        document.getElementById('resultCard').classList.add('show');
+        
+        // Scroll to results
+        document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        
+      } catch (error) {
+        console.error('Full error:', error);
+        alert('Error analyzing your profile: ' + error.message + '\n\nPlease check the browser console for details.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🎯 Discover My Investor Profile';
+      }
+    });
+    
+    // Sign up handler
+    function handleSignup() {
+      // Store profile data for signup page
+      const personaText = document.getElementById('resultPersona').textContent;
+      // Remove emoji if present (🎭 )
+      const cleanPersona = personaText.replace(/^🎭\s*/, '').trim();
+      
+      const profileData = {
+        risk_score: parseFloat(document.getElementById('resultScore').textContent),
+        risk_category: document.getElementById('resultCategory').textContent,
+        persona: cleanPersona,
+        survey_responses: surveyResponses,  // Store full survey data
+        timestamp: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('portfoliai_profile', JSON.stringify(profileData));
+      
+      // Redirect to signup page
+      window.location.href = '/signup';
+    }
+    
+    // Store survey responses globally so we can include them
+    let surveyResponses = {};
+    
+    // Check if user is logged in
+    async function checkIfLoggedIn() {
+      try {
+        const response = await fetch('/auth/me', { credentials: 'include' });
+        return response.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+    
+    // Initialize progress
+    updateProgress();
+  </script>
+</body>
+</html>
+

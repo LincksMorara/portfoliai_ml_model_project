@@ -1,0 +1,113 @@
+================================================================================
+                    DATASET INFORMATION
+================================================================================
+
+📊 DATASET OVERVIEW
+--------------------------------------------------------------------------------
+File Name:     survey_with_scores_and_archetypes.csv
+Location:      data/processed
+Total Rows:    132
+Total Columns: 28
+Size:          132 samples × 28 features
+
+================================================================================
+               COLUMN STRUCTURE
+================================================================================
+
+🔹 DEMOGRAPHIC & BEHAVIORAL FEATURES (12 columns)
+--------------------------------------------------------------------------------
+   1. gender_male                    (float64)
+   2. age                            (int64)
+   3. education_level                (int64)
+   4. invests                        (int64)
+   5. invest_prop_pct                (float64)
+   6. monitor_freq_per_month         (int64)
+   7. expected_return_pct            (float64)
+   8. horizon_years                  (int64)
+   9. rank_equity                    (int64)
+  10. rank_mutuals                   (int64)
+  11. invests_stock                  (int64)
+  12. raw_index                      (int64)
+
+🔹 OCCUPATION FEATURES - One-Hot Encoded (4 columns)
+--------------------------------------------------------------------------------
+   1. occupation_Others              (bool)
+   2. occupation_Salaried            (bool)
+   3. occupation_Self-employed       (bool)
+   4. occupation_Student             (bool)
+
+🔹 INVESTMENT AVENUE FEATURES - One-Hot Encoded (6 columns)
+--------------------------------------------------------------------------------
+   1. main_avenue_Bonds              (bool)
+   2. main_avenue_Equity             (bool)
+   3. main_avenue_Fixed Deposits     (bool)
+   4. main_avenue_Gold / SGBs        (bool)
+   5. main_avenue_Mutual Funds       (bool)
+   6. main_avenue_PPF - Public Provident Fund (bool)
+
+🔹 TARGET VARIABLES (3 columns) ⭐
+--------------------------------------------------------------------------------
+   1. survey_risk_score              (float64) - Continuous risk score (0-1)
+   2. survey_archetype               (object) - Categorical: Conservative/Comfortable/Enthusiastic
+   3. risk_raw                       (float64)
+
+🔹 METADATA COLUMNS (3 columns)
+--------------------------------------------------------------------------------
+   1. Timestamp                      (object)
+   2. inv_horizon                    (float64)
+   3. cluster                        (int64)
+
+================================================================================
+                    DATASET STATISTICS
+================================================================================
+
+📈 TARGET VARIABLE: survey_risk_score
+--------------------------------------------------------------------------------
+  Mean:   0.2631
+  Std:    0.3503
+  Min:    0.0000
+  Max:    1.0000
+  Median: 0.0980
+
+📊 TARGET VARIABLE: survey_archetype (Distribution)
+--------------------------------------------------------------------------------
+  Conservative        :  71 samples ( 53.8%)
+  Comfortable         :  38 samples ( 28.8%)
+  Enthusiastic        :  23 samples ( 17.4%)
+
+================================================================================
+                         SAMPLE DATA
+================================================================================
+
+First 8 rows (showing key features and target variables):
+--------------------------------------------------------------------------------
+   gender_male  age  education_level  invest_prop_pct  expected_return_pct  survey_risk_score survey_archetype
+0          1.0   39                4             0.15                 0.15              0.033     Conservative
+1          1.0   30                4             0.25                 0.15              0.174     Conservative
+2          0.0   26                4             0.40                 0.15              0.146     Conservative
+3          1.0   32                4             0.15                 0.15              0.065     Conservative
+4          1.0   28                4             0.40                 0.15              0.985      Comfortable
+5          1.0   35                4             0.25                 0.15              0.005     Conservative
+6          0.0   24                4             0.40                 0.15              0.985      Comfortable
+7          0.0   36                0             0.25                 0.15              0.190     Conservative
+
+================================================================================
+                    MODEL TRAINING INFORMATION
+================================================================================
+
+This dataset was used to train:
+  • Random Forest Regressor (R² = 0.891)
+  • Random Forest Classifier (Accuracy ≈ 85%)
+
+Training Configuration:
+  • Training Samples: 105 (80%)
+  • Test Samples:      27 (20%)
+  • Total Features:    22 engineered features
+  • Model Type:        Random Forest
+
+================================================================================
+
+💡 This dataset represents the cleaned, feature-engineered
+   training data used for the PortfoliAI risk profiling model.
+
+================================================================================

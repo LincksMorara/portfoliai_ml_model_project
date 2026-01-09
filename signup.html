@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - PortfoliAI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+    
+    .profile-preview {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border: 2px solid #667eea;
+    }
+    
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .profile-row:last-child {
+      border-bottom: none;
+    }
+    
+    .profile-label {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .profile-value {
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s ease;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .error-message {
+      background: #ff000015;
+      color: #c00;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+      border: 1px solid #ff000030;
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .back-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Activate Your AI Consultant</h1>
+    <p class="subtitle">Create your account to unlock personalized investment insights</p>
+    
+    <!-- Profile Preview -->
+    <div class="profile-preview" id="profilePreview" style="display: none;">
+      <div style="text-align: center; margin-bottom: 15px;">
+        <strong style="color: #667eea; font-size: 16px;">Your Investor Profile</strong>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Risk Score:</span>
+        <span class="profile-value" id="previewScore">-</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Category:</span>
+        <span class="profile-value" id="previewCategory">-</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Persona:</span>
+        <span class="profile-value" id="previewPersona">-</span>
+      </div>
+    </div>
+    
+    <!-- Error Message -->
+    <div class="error-message" id="errorMessage"></div>
+    
+    <!-- Signup Form -->
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="you@outlook.com">
+        <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+          💡 Tip: Use @outlook.com or @hotmail.com for best results
+        </small>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Minimum 8 characters" minlength="8">
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Re-enter password" minlength="8">
+      </div>
+      
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Create Account & Access AI Consultant
+      </button>
+    </form>
+    
+    <div class="back-link">
+      <a href="/">← Back to home</a>
+    </div>
+  </div>
+  
+  <script>
+    // Load profile from localStorage
+    const savedProfile = localStorage.getItem('portfoliai_profile');
+    
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        document.getElementById('profilePreview').style.display = 'block';
+        document.getElementById('previewScore').textContent = profile.risk_score || '-';
+        document.getElementById('previewCategory').textContent = profile.risk_category || profile.category || '-';
+        document.getElementById('previewPersona').textContent = profile.persona || '-';
+      } catch (e) {
+        console.error('Error loading profile:', e);
+      }
+    }
+    
+    // Handle signup
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const errorMsg = document.getElementById('errorMessage');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Validation
+      if (password !== confirmPassword) {
+        errorMsg.textContent = 'Passwords do not match';
+        errorMsg.style.display = 'block';
+        return;
+      }
+      
+      // Get investor profile from localStorage
+      let investorProfile = null;
+      if (savedProfile) {
+        try {
+          const profile = JSON.parse(savedProfile);
+          // Store complete profile from survey
+          investorProfile = {
+            risk_score: profile.risk_score,
+            risk_category: profile.risk_category || profile.category,
+            persona: profile.persona,
+            survey_responses: profile.survey_responses || {}
+            // Note: timestamp and category are removed as they're not in DB schema
+          };
+        } catch (e) {
+          console.error('Error parsing profile:', e);
+        }
+      }
+      
+      // Submit signup
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account...';
+      errorMsg.style.display = 'none';
+      
+      try {
+        const response = await fetch('/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            email: email,
+            password: password,
+            investor_profile: investorProfile
+          })
+        });
+        
+        const data = await response.json();
+        console.log('Response:', data);
+        
+        if (!response.ok) {
+          // Handle error response
+          let errorMessage = 'Signup failed';
+          if (typeof data.detail === 'string') {
+            errorMessage = data.detail;
+          } else if (data.detail && data.detail.message) {
+            errorMessage = data.detail.message;
+          } else if (data.message) {
+            errorMessage = data.message;
+          }
+          throw new Error(errorMessage);
+        }
+        
+        console.log('Signup successful!', data);
+        
+        // Show success message
+        errorMsg.style.display = 'block';
+        errorMsg.style.background = '#d1fae5';
+        errorMsg.style.color = '#065f46';
+        errorMsg.style.border = '1px solid #a7f3d0';
+        errorMsg.textContent = 'Account created successfully! Redirecting to dashboard...';
+        
+        // Clear localStorage profile (now saved in account)
+        localStorage.removeItem('portfoliai_profile');
+        
+        // Redirect to dashboard immediately
+        submitBtn.textContent = '✅ Success! Redirecting...';
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Signup error:', error);
+        errorMsg.textContent = error.message || 'An error occurred during signup';
+        errorMsg.style.display = 'block';
+        errorMsg.style.background = '#fee2e2';
+        errorMsg.style.color = '#991b1b';
+        errorMsg.style.border = '1px solid #fecaca';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Account & Access AI Consultant';
+      }
+    });
+  </script>
+</body>
+</html>
+
+

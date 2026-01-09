@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Diagnostics</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #00ff00;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #2a2a2a;
+      border-radius: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .success { color: #00ff00; }
+    .error { color: #ff0000; }
+    .warning { color: #ffaa00; }
+  </style>
+</head>
+<body>
+  <h1>🔧 Chatbot Diagnostics</h1>
+  
+  <div class="test-section">
+    <h2>Test 1: Check Authentication</h2>
+    <button onclick="testAuth()">Check Session</button>
+    <div class="result" id="authResult"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Test 2: Create Conversation</h2>
+    <button onclick="testCreateConversation()">Create New Chat</button>
+    <div class="result" id="createResult"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Test 3: Send Message</h2>
+    <button onclick="testSendMessage()">Send Test Message</button>
+    <div class="result" id="sendResult"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Test 4: Get Conversations</h2>
+    <button onclick="testGetConversations()">List All Chats</button>
+    <div class="result" id="listResult"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Test 5: Delete Conversation</h2>
+    <input type="text" id="deleteId" placeholder="Conversation ID" style="padding: 8px; margin-right: 10px; background: #2a2a2a; color: #00ff00; border: 1px solid #666;">
+    <button onclick="testDeleteConversation()">Delete</button>
+    <div class="result" id="deleteResult"></div>
+  </div>
+  
+  <div class="test-section">
+    <a href="/chatbot" style="color: #667eea;">← Back to Chatbot</a>
+  </div>
+  
+  <script>
+    function display(elementId, message, type = 'success') {
+      const element = document.getElementById(elementId);
+      element.innerHTML = `<span class="${type}">${message}</span>`;
+    }
+    
+    async function testAuth() {
+      try {
+        display('authResult', 'Testing...', 'warning');
+        
+        // Check cookies
+        const cookies = document.cookie;
+        display('authResult', `Cookies: ${cookies || '(none)'}`, cookies ? 'success' : 'error');
+        
+        // Check session
+        const response = await fetch('/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          display('authResult', `✅ Logged in as: ${data.email}\nUser ID: ${data.user_id}`, 'success');
+        } else {
+          display('authResult', `❌ Not authenticated (${response.status})\nGo to /login`, 'error');
+        }
+      } catch (error) {
+        display('authResult', `❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function testCreateConversation() {
+      try {
+        display('createResult', 'Creating...', 'warning');
+        
+        const response = await fetch('/api/conversations/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initial_message: 'Test chat' })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          display('createResult', `✅ Created:\nID: ${data.conversation_id}\nTitle: ${data.title}`, 'success');
+        } else {
+          const error = await response.json();
+          display('createResult', `❌ Error (${response.status}): ${error.detail}`, 'error');
+        }
+      } catch (error) {
+        display('createResult', `❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function testSendMessage() {
+      try {
+        display('sendResult', 'Sending...', 'warning');
+        
+        const response = await fetch('/api/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Test message - what is Apple trading at?' })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          display('sendResult', `✅ Response received:\n${JSON.stringify(data, null, 2)}`, 'success');
+        } else {
+          const error = await response.json();
+          display('sendResult', `❌ Error (${response.status}): ${error.detail}`, 'error');
+        }
+      } catch (error) {
+        display('sendResult', `❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function testGetConversations() {
+      try {
+        display('listResult', 'Loading...', 'warning');
+        
+        const response = await fetch('/api/conversations');
+        
+        if (response.ok) {
+          const data = await response.json();
+          const convs = data.conversations || [];
+          
+          if (convs.length === 0) {
+            display('listResult', '📭 No conversations found', 'warning');
+          } else {
+            let html = `✅ Found ${convs.length} conversations:\n\n`;
+            convs.forEach(c => {
+              html += `📝 ${c.title}\n   ID: ${c.conversation_id}\n   Messages: ${c.message_count}\n\n`;
+            });
+            display('listResult', html, 'success');
+          }
+        } else {
+          const error = await response.json();
+          display('listResult', `❌ Error (${response.status}): ${error.detail}`, 'error');
+        }
+      } catch (error) {
+        display('listResult', `❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    async function testDeleteConversation() {
+      const id = document.getElementById('deleteId').value.trim();
+      
+      if (!id) {
+        display('deleteResult', '⚠️ Enter conversation ID first', 'warning');
+        return;
+      }
+      
+      try {
+        display('deleteResult', 'Deleting...', 'warning');
+        
+        const response = await fetch(`/api/conversations/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          display('deleteResult', `✅ Deleted successfully`, 'success');
+        } else {
+          const error = await response.json();
+          display('deleteResult', `❌ Error (${response.status}): ${error.detail}`, 'error');
+        }
+      } catch (error) {
+        display('deleteResult', `❌ Error: ${error.message}`, 'error');
+      }
+    }
+    
+    // Auto-run auth test on load
+    window.addEventListener('DOMContentLoaded', () => {
+      testAuth();
+    });
+  </script>
+</body>
+</html>
+
+

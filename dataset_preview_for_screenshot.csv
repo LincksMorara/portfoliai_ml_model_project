@@ -1,0 +1,13 @@
+gender_male,age,education_level,invest_prop_pct,expected_return_pct,horizon_years,monitor_freq_per_month,survey_risk_score,survey_archetype,risk_raw
+1.0,39,4,0.15,0.15,7,1,0.033,Conservative,0.8
+1.0,30,4,0.25,0.15,7,4,0.174,Conservative,2.1
+0.0,26,4,0.4,0.15,7,4,0.146,Conservative,1.8
+1.0,32,4,0.15,0.15,4,1,0.065,Conservative,1.1
+1.0,28,4,0.4,0.15,2,30,0.985,Comfortable,9.4
+1.0,35,4,0.25,0.15,4,1,0.005,Conservative,0.5
+0.0,24,4,0.4,0.15,2,30,0.985,Comfortable,9.4
+0.0,36,0,0.25,0.15,4,4,0.19,Conservative,2.2
+1.0,50,0,0.15,0.15,7,1,0.048,Conservative,0.9
+0.0,45,5,0.075,0.15,7,4,0.155,Conservative,1.9
+1.0,41,4,0.075,0.15,7,1,0.046,Conservative,0.9
+1.0,36,4,0.075,0.15,2,1,0.081,Comfortable,1.2
